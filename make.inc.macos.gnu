@@ -1,12 +1,12 @@
 # makefile overrides
 # OS:       macOS
-# Compiler: gfortran 9.X
+# Compiler: gfortran 10.X
 # OpenMP:   enabled
 #
 
-CC=gcc-9
-CXX=g++-9
-FC=gfortran-9
+CC=gcc-10
+CXX=g++-10
+FC=gfortran-10
 
 ifeq ($(PREFIX),)
     FMM_INSTALL_DIR=/usr/local/lib
@@ -20,8 +20,8 @@ OMPFLAGS = -fopenmp
 OMPLIBS = -lgomp
 
 # MATLAB interface:
-MFLAGS += -L/usr/local/lib/gcc/9
-MEX = $(shell ls -d /Applications/MATLAB_R201*.app)/bin/mex
+MFLAGS += -L/usr/local/lib/gcc/10
+MEX = $(shell ls -d /Applications/MATLAB_R202*.app)/bin/mex
 #LIBS = -lm -lstdc++.6
 #MEXLIBS= -lm -lstdc++.6 -lgfortran -ldl
 
