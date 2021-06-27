@@ -4,9 +4,9 @@
 # OpenMP:   enabled
 #
 
-CC=gcc-9
-CXX=g++-9
-FC=gfortran-9
+CC=gcc-10
+CXX=g++-10
+FC=gfortran-11
 
 ifeq ($(PREFIX),)
     FMM_INSTALL_DIR=/usr/local/lib
@@ -20,8 +20,8 @@ OMPFLAGS = -fopenmp
 OMPLIBS = -lgomp
 
 # MATLAB interface:
-MFLAGS += -L/usr/local/lib/gcc/9
-MEX = $(shell ls -d /Applications/MATLAB_R201*.app)/bin/mex
+MFLAGS += -L/usr/local/lib/gcc/11
+MEX = $(shell ls -d /Applications/MATLAB_R202*.app)/bin/mex
 #LIBS = -lm -lstdc++.6
 #MEXLIBS= -lm -lstdc++.6 -lgfortran -ldl
 
