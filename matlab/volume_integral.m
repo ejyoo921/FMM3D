@@ -7,14 +7,13 @@ pgt = 1;
 
 
 
-x0 = -1; xend = 1;
+x0 = -3; xend = 3;
 xspan = [x0, xend];
 yspan = [x0, xend];
-zspan = [x0, xend];
+zspan = [x0, xend];t
 
-Nsource = 101;
+Nsource = 100;
 dx = (xend - x0)/(Nsource);
-% lev = x0:dx:xend;
 lev = linspace(x0, xend, Nsource);
 ns = (Nsource)^3; %total number of source pts 
 
@@ -26,9 +25,12 @@ srcinfo.sources = xyz; %xj (R3 x N)
 Ck = ones(1, ns); % one for all now
 
 % target point
-lev_targ = linspace(-5, 5, Nx_targ);
-targ = make_grid(lev_targ, Nx_targ);
+% making cube for targets
+% lev_targ = linspace(-5, 5, Nx_targ);
+% targ = make_grid(lev_targ, Nx_targ);
 
+
+targ = [4;4;4];
 matlabV_all = [];
 matlabV_time_all = 0;
 for t = 1:Nx_targ^3

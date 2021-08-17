@@ -19,11 +19,11 @@ xmin = xspan(1); xmax = xspan(end);
 ymin = yspan(1); ymax = yspan(end);
 zmin = zspan(1); zmax = zspan(end);
 
-q1 = integral3(fun1,xmin,xmax,ymin,ymax,zmin,zmax,'AbsTol',1e-6);
+q1 = integral3(fun1,xmin,xmax,ymin,ymax,zmin,zmax,'AbsTol',1e-16);
 
-q21 = -integral3(fun21,xmin,xmax,ymin,ymax,zmin,zmax,'AbsTol',1e-6);
-q22 = -integral3(fun22,xmin,xmax,ymin,ymax,zmin,zmax,'AbsTol',1e-6);
-q23 = -integral3(fun23,xmin,xmax,ymin,ymax,zmin,zmax,'AbsTol',1e-6);
+q21 = -integral3(fun21,xmin,xmax,ymin,ymax,zmin,zmax,'AbsTol',1e-16);
+q22 = -integral3(fun22,xmin,xmax,ymin,ymax,zmin,zmax,'AbsTol',1e-16);
+q23 = -integral3(fun23,xmin,xmax,ymin,ymax,zmin,zmax,'AbsTol',1e-16);
 
 res = [q21, q22, q23+q1]';
 matlab_Vtime = toc;
