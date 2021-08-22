@@ -3,7 +3,7 @@ function [Volume, fmm3d_time_all] = volume_integral(xyz, dx, targ, Ck)
 % targ = target points
 
 % few setups 
-eps = 1e-5;
+eps = 1e-3;
 pg = 1;
 pgt = 1;
 
@@ -14,13 +14,13 @@ srcinfo.sources = xyz; %xj (R3 x N)
 ntarg = size(targ,2);
 
 % store x3m - C3n * x3n constant for each n
-const = zeros(1,ns);
+Cnx3n = zeros(1,ns);
 for n = 1:ns
     cn = Ck(n);
     xn = xyz(:,n);
     x3n = xn(3);
 
-    const(n) = cn * x3n;
+    Cnx3n(n) = cn * x3n;
 end
 
 % We compute each element in the volume integral 
@@ -30,22 +30,21 @@ fmm3d_time_all = 0;
 for j = 1:3
     if j == 1
         srcinfo.charges = zeros(1,ns);
-        vj1 = [const; zeros(1,ns); zeros(1,ns)];
+        vj1 = [Cnx3n; zeros(1,ns); zeros(1,ns)];
         srcinfo.dipoles = vj1;
     elseif j == 2
         srcinfo.charges = zeros(1,ns);
-        vj2 = [zeros(1,ns); const; zeros(1,ns)];
+        vj2 = [zeros(1,ns); Cnx3n; zeros(1,ns)];
         srcinfo.dipoles = vj2;
     else % j==3
         srcinfo.charges = Ck; %for the very first integral 
-        vj3 = [zeros(1,ns); zeros(1,ns); const;];
+        vj3 = [zeros(1,ns); zeros(1,ns); Cnx3n];
         srcinfo.dipoles = vj3;
     end
     
     tic
     U = lfmm3d(eps,srcinfo,pg,targ,pgt);
     fmm3d_time_all = fmm3d_time_all + toc;
-%     Volume_pt1(j,:) = U.pottarg * (dx^3);
     Volume_pt1(j,:) = U.pottarg * (dx^3);
 end
 
@@ -64,7 +63,7 @@ for j = 1:3
         srcinfo.dipoles = vj2;
     else % j==3
         srcinfo.charges = zeros(1,ns);
-        vj3 = [zeros(1,ns); zeros(1,ns); Ck;];
+        vj3 = [zeros(1,ns); zeros(1,ns); Ck];
         srcinfo.dipoles = vj3;
     end
     
