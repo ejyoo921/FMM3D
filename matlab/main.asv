@@ -13,7 +13,7 @@ matlab_t = zeros(length(ntarg_vec),1);
 for k = 1:length(Nsource_vec)
     % targ_x = linspace(-4, 4, 40);
     
-    targ_x = linspace(-4, 4, ntarg_vec(1));
+    targ_x = linspace(-4, 4, ntarg_vec(k));
     Nsource = Nsource_vec(k);
     
     main_setting
@@ -62,15 +62,11 @@ end
 %     close all
 % end
 
-
-%% save data
-save data time_nsource_1e3
 %% figure timing
-
 loglog(Nsource_vec, fmm3d_t, '*-', 'linewidth',2)
 % hold on
 % loglog(Nsource_vec, matlab_t, 'o-', 'linewidth',2)
-% legend('fmm3d', 'matlab','location','northwest')
+legend('fmm3d', 'matlab','location','northwest')
 xlabel('number of source points', 'interpreter','latex')
 ylabel('elapsed time (sec)', 'interpreter','latex')
 title('Targets in $$x \in [-4,4]$$ w/ Nx=100 (eps 1e-3)', 'interpreter','latex')

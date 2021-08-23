@@ -1,13 +1,12 @@
 %% source points
 
-x0 = 0; xend = 3;
+x0 = -1; xend = 1;
 y0 = x0; yend = xend;
 z0 = x0; zend = xend;
 xspan = [x0, xend];
 yspan = [x0, xend];
 zspan = [x0, xend];
 
-Nsource = 100;
 lev = linspace(x0, xend, Nsource);
 dx = (xend - x0)/(Nsource);
 % dx = 0.02;
@@ -26,7 +25,7 @@ xyz = make_grid(lev, Nsource);
 % ntarg = size(targ,2);
 
 ntarg = length(targ_x);
-targ_yz = 2*ones(3, ntarg);
+targ_yz = 0.5*ones(3, ntarg);
 targ_yz(1,:) = targ_x;
 targ = targ_yz;
 
@@ -47,20 +46,20 @@ Ck = ones(1, ns); % one for all now
 
 
 %% analytic-kind solution
-tol = 1e-10;
-matlabV_all = zeros(3, ntarg);
-matlabV_time_all = 0;
-for t = 1:ntarg
-    targ_t = targ(:,t);
-    
-    x0 = targ_t(1);
-    y0 = targ_t(2);
-    z0 = targ_t(3);
-    [matlabV, matlabV_time] = fmm_test_analytic(Ck(1), x0, y0, z0, xspan, yspan, zspan, tol);
-    
-    matlabV_all(:,t) = matlabV;
-    matlabV_time_all = matlabV_time_all + matlabV_time;
-end
+% tol = 1e-3;
+% matlabV_all = zeros(3, ntarg);
+% matlabV_time_all = 0;
+% for t = 1:ntarg
+%     targ_t = targ(:,t);
+%     
+%     x0 = targ_t(1);
+%     y0 = targ_t(2);
+%     z0 = targ_t(3);
+%     [matlabV, matlabV_time] = fmm_test_analytic(Ck(1), x0, y0, z0, xspan, yspan, zspan, tol);
+%     
+%     matlabV_all(:,t) = matlabV;
+%     matlabV_time_all = matlabV_time_all + matlabV_time;
+% end
 
 %% Calculate boundary values analytically
 
