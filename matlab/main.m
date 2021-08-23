@@ -3,15 +3,14 @@ clear
 close all
 
 %% begin
-ntarg_vec = 100;
-Nsource_vec = 100:100:1000;
+ntarg_vec = 40;
+Nsource_vec = 50:10:100;
 
 fmm3d_t = zeros(length(ntarg_vec),1);
 matlab_t = zeros(length(ntarg_vec),1);
 
 % for k = 1:length(ntarg_vec)
 for k = 1:length(Nsource_vec)
-    % targ_x = linspace(-4, 4, 40);
     
     targ_x = linspace(-4, 4, ntarg_vec(1));
     Nsource = Nsource_vec(k);
@@ -58,26 +57,84 @@ end
 %     end
 %     set(gca,'Fontsize',20);
 % 
-%     saveas(figure1,['./figures/test_direction',num2str(i),'.eps'], 'epsc');
+%     saveas(figure1,['./figures/nsource_1e2_direction',num2str(i),'.eps'], 'epsc');
 %     close all
 % end
 
 
 %% save data
-save data time_nsource_1e3
+save data_time_nsource_1e3
 %% figure timing
 
-loglog(Nsource_vec, fmm3d_t, '*-', 'linewidth',2)
+figure1 = loglog(Nsource_vec.^3, fmm3d_t, '*-', 'linewidth',2);
 % hold on
 % loglog(Nsource_vec, matlab_t, 'o-', 'linewidth',2)
 % legend('fmm3d', 'matlab','location','northwest')
 xlabel('number of source points', 'interpreter','latex')
 ylabel('elapsed time (sec)', 'interpreter','latex')
-title('Targets in $$x \in [-4,4]$$ w/ Nx=100 (eps 1e-3)', 'interpreter','latex')
+title('Targets (40pts) in $$x \in [-4,4]$$ (eps 1e-3)', 'interpreter','latex')
 
 set(gca,'Fontsize',20);
-hold off
-saveas(figure1,'./figures/time_nsource_1e3.fig');
-saveas(figure1,'./figures/time_nsource_1e3.eps', 'epsc');
+% hold off
+saveas(figure1,'./figures/time_nsource_50_1e2.fig');
+saveas(figure1,'./figures/time_nsource_50_1e2.eps', 'epsc');
+
+%%
+figure3 =figure('Position', [100, 100, 1500, 500]);
+for i = 1:3
+    subplot(1,3,i)
+    plot(targ_x, volume_ns50(i,:), '--','linewidth', 3)
+    hold on
+    plot(targ_x, Volume(i,:), '*-','linewidth', 2, 'markersize', 4)
+    plot(targ_x, matlabV_all(i,:), 'linewidth', 2)
+    hold off
+    
+    if i == 1
+        title(' solution in x.','interpreter','latex')
+    elseif i == 2
+        title(' solution in y.','interpreter','latex')
+    else 
+        title(' solution in z.','interpreter','latex')
+    end
+    
+    xlabel('x','interpreter','latex')
+    
+    
+    legend('$$ns = 50^3$$', '$$ns = 100^3$$','real','interpreter','latex')
+    legend('Location','southwest')
+    grid on
+    set(gca,'Fontsize',18);
+end
+
+%%
+figure4 =figure('Position', [100, 100, 1500, 500]);
+for i = 1:3
+    subplot(1,3,i)
+    err_v_ns50 = abs(matlabV_all - volume_ns50);
+    err_v_ns100 = abs(matlabV_all - Volume);
+    semilogy(targ_x, err_v_ns50(i,:), '--','linewidth', 3)
+    hold on
+    semilogy(targ_x, err_v_ns100(i,:), '*-','linewidth', 2, 'markersize', 4)
+    hold off
+    
+    if i == 1
+        title(' Error in x.','interpreter','latex')
+    elseif i == 2
+        title(' Error in y.','interpreter','latex')
+    else 
+        title(' Error in z.','interpreter','latex')
+    end
+    
+    xlabel('x','interpreter','latex')
+    
+    
+    legend('$$ns = 50^3$$', '$$ns = 100^3$$','interpreter','latex')
+    legend('Location','southwest')
+    grid on
+    set(gca,'Fontsize',18);
+end
+
+
+
 
 
