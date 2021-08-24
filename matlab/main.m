@@ -3,24 +3,34 @@ clear
 close all
 
 %% begin
-ntarg_vec = 40;
-Nsource_vec = 50:10:100;
+% ntarg_vec = 40;
+% Nsource_vec = 50:10:100;
+
+% ntarg_vec = 40:100:1240;
+% Nsource_vec = 100;
+
+ntarg_vec = 50:100:1040;
+Nsource_vec = 10:10:100;
 
 fmm3d_t = zeros(length(ntarg_vec),1);
 matlab_t = zeros(length(ntarg_vec),1);
 
-% for k = 1:length(ntarg_vec)
-for k = 1:length(Nsource_vec)
+for k = 1:length(ntarg_vec)
+    for s = 1:length(Nsource_vec)
     
-    targ_x = linspace(-4, 4, ntarg_vec(1));
-    Nsource = Nsource_vec(k);
-    
-    main_setting
-%     matlab_t(k) = matlabV_time_all;
+        targ_x = linspace(-4, 4, ntarg_vec(k));
+        Nsource = Nsource_vec(s);
 
-    [Volume, fmm3d_time] = volume_integral(xyz, dx, targ, Ck);
-    fmm3d_t(k) = fmm3d_time;
+        main_setting
+        matlab_t(k) = matlabV_time_all;
 
+        [Volume, fmm3d_time] = volume_integral(xyz, dx, targ, Ck);
+        fmm3d_t(k) = fmm3d_time;
+
+        matlabV_time_all = 0;
+        fmm3d_time = 0;
+        s
+    end
 end
 
 % error_vec = abs(Volume - matlabV_all);
@@ -63,21 +73,21 @@ end
 
 
 %% save data
-save data_time_nsource_1e3
+save data_time_vary_nsnt_1e3
 %% figure timing
 
-figure1 = loglog(Nsource_vec.^3, fmm3d_t, '*-', 'linewidth',2);
-% hold on
-% loglog(Nsource_vec, matlab_t, 'o-', 'linewidth',2)
-% legend('fmm3d', 'matlab','location','northwest')
-xlabel('number of source points', 'interpreter','latex')
-ylabel('elapsed time (sec)', 'interpreter','latex')
-title('Targets (40pts) in $$x \in [-4,4]$$ (eps 1e-3)', 'interpreter','latex')
-
-set(gca,'Fontsize',20);
+figure1 = loglog(ntarg_vec, fmm3d_t, '*-', 'linewidth',2);
+hold on
+loglog(ntarg_vec, matlab_t, 'o-', 'linewidth',2)
+legend('fmm3d', 'matlab','location','northwest')
+xlabel('Number of target points', 'interpreter','latex')
+ylabel('Elapsed time (sec)', 'interpreter','latex')
+% title('Targets (40pts) in $$x \in [-4,4]$$ (eps 1e-3)', 'interpreter','latex')
+title('Computation time (Nsource = 1e6, tol = 1e-3)', 'interpreter','latex')
+set(gca,'Fontsize',18);
 % hold off
-saveas(figure1,'./figures/time_nsource_50_1e2.fig');
-saveas(figure1,'./figures/time_nsource_50_1e2.eps', 'epsc');
+% saveas(figure1,'./figures/time_ntarg_50_1e2.fig');
+% saveas(figure1,'./figures/time_ntarg_50_1e2.eps', 'epsc');
 
 %%
 figure3 =figure('Position', [100, 100, 1500, 500]);
