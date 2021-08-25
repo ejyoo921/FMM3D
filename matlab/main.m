@@ -9,28 +9,30 @@ close all
 % ntarg_vec = 40:100:1240;
 % Nsource_vec = 100;
 
-ntarg_vec = 50:100:1040;
-Nsource_vec = 10:10:100;
+ntarg_vec = logspace(1,5,10);
+ntarg_vec = ntarg_vec(8:end);
+% ntarg_vec = 50:100:1040;
+Nsource_vec = 20:20:100;
 
-fmm3d_t = zeros(length(ntarg_vec),1);
-matlab_t = zeros(length(ntarg_vec),1);
+fmm3d_t = zeros(length(ntarg_vec), length(Nsource_vec));
+% matlab_t = zeros(length(ntarg_vec), 1);
 
 for k = 1:length(ntarg_vec)
     for s = 1:length(Nsource_vec)
-    
-        targ_x = linspace(-4, 4, ntarg_vec(k));
-        Nsource = Nsource_vec(s);
 
-        main_setting
-        matlab_t(k) = matlabV_time_all;
+    targ_x = linspace(-4, 4, ntarg_vec(k));
+    Nsource = Nsource_vec(s);
 
-        [Volume, fmm3d_time] = volume_integral(xyz, dx, targ, Ck);
-        fmm3d_t(k) = fmm3d_time;
+    main_setting
+%     matlab_t(k) = matlabV_time_all;
+% 
+    [Volume, fmm3d_time] = volume_integral(xyz, dx, targ, Ck);
+    fmm3d_t(k,s) = fmm3d_time;
 
-        matlabV_time_all = 0;
-        fmm3d_time = 0;
-        s
+%     matlabV_time_all = 0;
+    fmm3d_time = 0;
     end
+    k
 end
 
 % error_vec = abs(Volume - matlabV_all);
@@ -73,18 +75,35 @@ end
 
 
 %% save data
-save data_time_vary_nsnt_1e3
+save data_time_5ns_nt_1e4_pt2
 %% figure timing
 
-figure1 = loglog(ntarg_vec, fmm3d_t, '*-', 'linewidth',2);
+figure1 = figure('Position', [100, 100, 800, 650]);
+loglog(ntarg_vec, fmm3d_t, '*-', 'linewidth',2);
 hold on
-loglog(ntarg_vec, matlab_t, 'o-', 'linewidth',2)
-legend('fmm3d', 'matlab','location','northwest')
+loglog(ntarg_vec(1:8), matlab_t(1:8), 'linewidth',2)
+%slope
+% loglog_slope(ntarg_vec, fmm3d_t, 'fmm3d', 'k--')
+x = ntarg_vec(1:8); y = matlab_t(1:8);
+logx1 = log(x); %
+logy1 = log(y);
+Const1 = polyfit(logx1, logy1, 1);
+slope1 = Const1(1);
+plot(ntarg_vec, exp(polyval(Const1, log(ntarg_vec))),'k--','Linewidth',2.5) %
+dim = [0.65 0.20 0.0 0.45];
+str = {['slope = ',num2str(round(slope1,4))]}; %
+annotation('textbox',dim,'String',str,'FitBoxToText','on','Fontsize',17)
+
+
+legend('Ns = 20','Ns = 40','Ns = 60','Ns = 80','Ns = 100', 'matlab','location','northwest')
 xlabel('Number of target points', 'interpreter','latex')
 ylabel('Elapsed time (sec)', 'interpreter','latex')
 % title('Targets (40pts) in $$x \in [-4,4]$$ (eps 1e-3)', 'interpreter','latex')
-title('Computation time (Nsource = 1e6, tol = 1e-3)', 'interpreter','latex')
+% title('Computation time (Nsource = 1e6, tol = 1e-3)', 'interpreter','latex')
+title('Computation time w/ various Nsource', 'interpreter','latex')
+grid on
 set(gca,'Fontsize',18);
+
 % hold off
 % saveas(figure1,'./figures/time_ntarg_50_1e2.fig');
 % saveas(figure1,'./figures/time_ntarg_50_1e2.eps', 'epsc');
