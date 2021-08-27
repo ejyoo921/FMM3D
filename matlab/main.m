@@ -2,33 +2,37 @@
 clear
 close all
 
+%% load analytic solution
+load matlabV_nt100.mat
 %% begin
-% ntarg_vec = 40;
-% Nsource_vec = 50:10:100;
+ntarg_vec = 100;
+Nsource_vec = 50:10:100;
+error_vec = zeros(1, length(Nsource_vec));
 
 % ntarg_vec = 40:100:1240;
 % Nsource_vec = 100;
 
-ntarg_vec = logspace(1,6,10);
+% ntarg_vec = logspace(1,6,10);
 % ntarg_vec = ntarg_vec(8:end);
 % ntarg_vec = 50:100:1040;
-Nsource_vec = 20:20:100;
+% Nsource_vec = 20:20:100;
 
-fmm3d_t = zeros(length(ntarg_vec), length(Nsource_vec));
+% fmm3d_t = zeros(length(ntarg_vec), length(Nsource_vec));
 % matlab_t = zeros(length(ntarg_vec), 1);
 
 for k = 1:length(ntarg_vec)
     for s = 1:length(Nsource_vec)
 
-    targ_x = linspace(-4, 4, ntarg_vec(k));
+    targ_x = linspace(1.5, 4, ntarg_vec(k));
     Nsource = Nsource_vec(s);
 
     main_setting
 %     matlab_t(k) = matlabV_time_all;
 % 
     [Volume, fmm3d_time] = volume_integral(xyz, dx, targ, Ck);
-    fmm3d_t(k,s) = fmm3d_time;
-
+    error_vec(s) = norm(Volume-matlabV_all, inf)
+    
+%     fmm3d_t(k,s) = fmm3d_time;
 %     matlabV_time_all = 0;
     fmm3d_time = 0;
     end
@@ -75,7 +79,7 @@ end
 
 
 %% save data
-save data_time_5ns_nt_1e6
+save data_error_conv_nt100
 %% figure timing
 
 figure1 = figure('Position', [100, 100, 800, 650]);
@@ -157,11 +161,12 @@ end
 figure4 =figure('Position', [100, 100, 1500, 500]);
 for i = 1:3
     subplot(1,3,i)
-    err_v_ns50 = abs(matlabV_all - volume_ns50);
+%     err_v_ns50 = abs(matlabV_all - volume_ns50);
     err_v_ns100 = abs(matlabV_all - Volume);
-    semilogy(targ_x, err_v_ns50(i,:), '--','linewidth', 3)
-    hold on
+%     semilogy(targ_x, err_v_ns50(i,:), '--','linewidth', 3)
+%     hold on
     semilogy(targ_x, err_v_ns100(i,:), '*-','linewidth', 2, 'markersize', 4)
+    hold on
     hold off
     
     if i == 1

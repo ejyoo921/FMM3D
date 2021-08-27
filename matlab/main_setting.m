@@ -46,7 +46,8 @@ Ck = ones(1, ns); % one for all now
 
 
 %% analytic-kind solution
-% tol = 1e-3;
+% tol = 1e-10;
+% 
 % matlabV_all = zeros(3, ntarg);
 % matlabV_time_all = 0;
 % for t = 1:ntarg
@@ -60,9 +61,9 @@ Ck = ones(1, ns); % one for all now
 %     matlabV_all(:,t) = matlabV;
 %     matlabV_time_all = matlabV_time_all + matlabV_time;
 % end
-% 
-% 
-% 
-% 
+
+
+
+
 
 

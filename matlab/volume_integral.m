@@ -3,7 +3,7 @@ function [Volume, fmm3d_time_all] = volume_integral(xyz, dx, targ, Ck)
 % targ = target points
 
 % few setups 
-eps = 1e-3;
+eps = 1e-5;
 pg = 1;
 pgt = 1;
 
