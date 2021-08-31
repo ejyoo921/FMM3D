@@ -3,12 +3,12 @@ clear
 close all
 
 %% load analytic solution
-load matlabV_nt100.mat
+% load matlabV_nt100_out.mat
 %% begin
 ntarg_vec = 100;
-Nsource_vec = 50:10:100;
-error_vec = zeros(1, length(Nsource_vec));
-
+Nsource_vec = 2*round(logspace(1,2,10));
+error_inf = zeros(1, length(Nsource_vec));
+error_L2 = zeros(1, length(Nsource_vec));
 % ntarg_vec = 40:100:1240;
 % Nsource_vec = 100;
 
@@ -23,18 +23,19 @@ error_vec = zeros(1, length(Nsource_vec));
 for k = 1:length(ntarg_vec)
     for s = 1:length(Nsource_vec)
 
-    targ_x = linspace(1.5, 4, ntarg_vec(k));
+    targ_x = linspace(1, 4, ntarg_vec(k));
     Nsource = Nsource_vec(s);
 
     main_setting
 %     matlab_t(k) = matlabV_time_all;
 % 
     [Volume, fmm3d_time] = volume_integral(xyz, dx, targ, Ck);
-    error_vec(s) = norm(Volume-matlabV_all, inf)
+    error_inf(s) = norm(Volume-matlabV_all, inf)
+    error_L2(s) = norm(Volume-matlabV_all, 2)
     
 %     fmm3d_t(k,s) = fmm3d_time;
 %     matlabV_time_all = 0;
-    fmm3d_time = 0;
+%     fmm3d_time = 0;
     end
     k
 end
@@ -79,7 +80,7 @@ end
 
 
 %% save data
-save data_error_conv_nt100
+save data_error_conv_nt1e2_2ns1e2_log
 %% figure timing
 
 figure1 = figure('Position', [100, 100, 800, 650]);
@@ -110,7 +111,7 @@ grid on
 set(gca,'Fontsize',18);
 
 %% Fix ntarg varying nsource - fmm only
-figure5 = figure('Position', [100, 100, 800, 650]);
+figure2 = figure('Position', [100, 100, 800, 650]);
 loglog(Nsource_vec.^3, fmm3d_t(5, :), '*-', 'linewidth',2);
 hold on
 x = Nsource_vec.^3; y = fmm3d_t(5, :);
@@ -186,7 +187,28 @@ for i = 1:3
     set(gca,'Fontsize',18);
 end
 
+%% Convergence plot
+
+figure5 = figure('Position', [100, 100, 800, 650]);
+loglog((xend-x0)./(Nsource_vec-1), error_inf, '*-', 'linewidth', 2)
+hold on
+xlabel('$$\Delta x$$ ($$ = \Delta y = \Delta z$$)', 'interpreter','latex')
+ylabel('Inf. norm(error)','interpreter','latex')
 
 
+x = (xend-x0)./(Nsource_vec-1); y = error_inf;
+logx1 = log(x); %
+logy1 = log(y);
+Const1 = polyfit(logx1, logy1, 1);
+slope1 = Const1(1);
+% plot(x, exp(polyval(Const1, log(x))),'k--','Linewidth',2.5) %
+dim = [0.65 0.20 0.0 0.01];
+str = {['slope = ',num2str(round(slope1,4))]}; %
+annotation('textbox',dim,'String',str,'FitBoxToText','on','Fontsize',23)
 
+% xlim([min(x), max(x)])
+% ylim([min(y), max(y)])
+
+grid on
+set(gca,'Fontsize',23);
 
