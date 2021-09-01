@@ -1,86 +1,51 @@
 %% clear things
-clear
-close all
+% clear
+% close all
 
-%% load analytic solution
-% load matlabV_nt100_out.mat
 %% begin
-ntarg_vec = 100;
-Nsource_vec = 2*round(logspace(1,2,10));
-error_inf = zeros(1, length(Nsource_vec));
-error_L2 = zeros(1, length(Nsource_vec));
-% ntarg_vec = 40:100:1240;
-% Nsource_vec = 100;
 
-% ntarg_vec = logspace(1,6,10);
-% ntarg_vec = ntarg_vec(8:end);
-% ntarg_vec = 50:100:1040;
-% Nsource_vec = 20:20:100;
+ntarg_vec = 1*round(logspace(1,2,10));
+Nsource_vec = 1*round(logspace(1,2,10));
+
+% fmm_sol_all = zeros(length(ntarg_vec), length(Nsource_vec));
+
+% error_inf = zeros(1, length(Nsource_vec));
+% error_L2 = zeros(1, length(Nsource_vec));
+
 
 % fmm3d_t = zeros(length(ntarg_vec), length(Nsource_vec));
 % matlab_t = zeros(length(ntarg_vec), 1);
 
-for k = 1:length(ntarg_vec)
-    for s = 1:length(Nsource_vec)
+for k = 1:length(ntarg_vec)-2
+    for s = 9:length(Nsource_vec)
 
-    targ_x = linspace(1, 4, ntarg_vec(k));
-    Nsource = Nsource_vec(s);
+        targ_x = linspace(-4, 4, ntarg_vec(k).^3);
+        Nsource = Nsource_vec(s);
 
-    main_setting
+        main_setting
+    % 
+        [Volume, fmm3d_time] = volume_integral(xyz, dx, targ, Ck);
+    %     error_inf(k,s) = norm(Volume-matlabV_all, inf);
+    %     error_L2(k,s) = norm(Volume-matlabV_all, 2);
+
+        fmm3d_t(k,s) = fmm3d_time;
+
+    end
+%     main_matlab_sol
 %     matlab_t(k) = matlabV_time_all;
-% 
-    [Volume, fmm3d_time] = volume_integral(xyz, dx, targ, Ck);
-    error_inf(s) = norm(Volume-matlabV_all, inf)
-    error_L2(s) = norm(Volume-matlabV_all, 2)
-    
-%     fmm3d_t(k,s) = fmm3d_time;
+%     
 %     matlabV_time_all = 0;
 %     fmm3d_time = 0;
-    end
     k
 end
 
 % error_vec = abs(Volume - matlabV_all);
 
-%% figures solution & error
-% for i = 1:3
-%     figure1=figure('Position', [100, 100, 1500, 500]);
-%     subplot(1,2,1)
-% 
-%     plot(targ_x, Volume(i,:), 'linewidth', 2)
-%     hold on
-%     plot(targ_x, matlabV_all(i,:), 'linewidth', 2)
-%     hold off
-%     if i == 1
-%         title('solution in x-dir.')
-%     elseif i == 2
-%         title('solution in y-dir.')
-%     else 
-%         title('solution in z-dir.')
-%     end
-%     legend('FMM3d', 'real');
-%     set(gca,'Fontsize',20);
-% 
-% 
-%     subplot(1,2,2)
-% 
-%     semilogy(targ_x, error_vec(i,:),'linewidth',2)
-%     if i == 1
-%         title('error in x-dir.')
-%     elseif i == 2
-%         title('error in y-dir.')
-%     else 
-%         title('error in z-dir.')
-%     end
-%     set(gca,'Fontsize',20);
-% 
-%     saveas(figure1,['./figures/nsource_1e2_direction',num2str(i),'.eps'], 'epsc');
-%     close all
-% end
 
 
 %% save data
-save data_error_conv_nt1e2_2ns1e2_log
+% save data_nt1e2_2ns1e2_m4_4
+
 %% figure timing
 
 figure1 = figure('Position', [100, 100, 800, 650]);
@@ -135,24 +100,25 @@ set(gca,'Fontsize',18);
 figure3 =figure('Position', [100, 100, 1500, 500]);
 for i = 1:3
     subplot(1,3,i)
-    plot(targ_x, volume_ns50(i,:), '--','linewidth', 3)
-    hold on
+%     plot(targ_x, volume_ns50(i,:), '--','linewidth', 3)
+%     hold on
     plot(targ_x, Volume(i,:), '*-','linewidth', 2, 'markersize', 4)
+    hold on
     plot(targ_x, matlabV_all(i,:), 'linewidth', 2)
     hold off
     
     if i == 1
-        title(' solution in x.','interpreter','latex')
+        ylabel(' solution in $$x$$-dir.','interpreter','latex')
     elseif i == 2
-        title(' solution in y.','interpreter','latex')
+        ylabel(' solution in $$y$$-dir.','interpreter','latex')
     else 
-        title(' solution in z.','interpreter','latex')
+        ylabel(' solution in $$z$$-dir.','interpreter','latex')
     end
     
-    xlabel('x','interpreter','latex')
+    xlabel('$$x$$','interpreter','latex')
     
     
-    legend('$$ns = 50^3$$', '$$ns = 100^3$$','real','interpreter','latex')
+    legend(['$$Ns = $$',num2str(Nsource),'$$^3$$'],'real','interpreter','latex')
     legend('Location','southwest')
     grid on
     set(gca,'Fontsize',18);
@@ -171,18 +137,18 @@ for i = 1:3
     hold off
     
     if i == 1
-        title(' Error in x.','interpreter','latex')
+        ylabel(' Error in $$x$$-dir.','interpreter','latex')
     elseif i == 2
-        title(' Error in y.','interpreter','latex')
+        ylabel(' Error in $$y$$-dir.','interpreter','latex')
     else 
-        title(' Error in z.','interpreter','latex')
+        ylabel(' Error in $$z$$-dir.','interpreter','latex')
     end
     
-    xlabel('x','interpreter','latex')
+    xlabel('$$x$$','interpreter','latex')
     
     
-    legend('$$ns = 50^3$$', '$$ns = 100^3$$','interpreter','latex')
-    legend('Location','southwest')
+    legend(['$$Ns = $$',num2str(Nsource),'$$^3$$'],'interpreter','latex')
+    legend('Location','northwest')
     grid on
     set(gca,'Fontsize',18);
 end
@@ -190,18 +156,19 @@ end
 %% Convergence plot
 
 figure5 = figure('Position', [100, 100, 800, 650]);
-loglog((xend-x0)./(Nsource_vec-1), error_inf, '*-', 'linewidth', 2)
+
+x = (xend-x0)./(Nsource_vec-1); y = error_inf;
+loglog(x, y, '*-', 'linewidth', 2)
 hold on
 xlabel('$$\Delta x$$ ($$ = \Delta y = \Delta z$$)', 'interpreter','latex')
 ylabel('Inf. norm(error)','interpreter','latex')
 
 
-x = (xend-x0)./(Nsource_vec-1); y = error_inf;
 logx1 = log(x); %
 logy1 = log(y);
 Const1 = polyfit(logx1, logy1, 1);
 slope1 = Const1(1);
-% plot(x, exp(polyval(Const1, log(x))),'k--','Linewidth',2.5) %
+plot(x, exp(polyval(Const1, log(x))),'k--','Linewidth',2.5) %
 dim = [0.65 0.20 0.0 0.01];
 str = {['slope = ',num2str(round(slope1,4))]}; %
 annotation('textbox',dim,'String',str,'FitBoxToText','on','Fontsize',23)
