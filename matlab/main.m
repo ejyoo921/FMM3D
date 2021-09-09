@@ -47,16 +47,20 @@ end
 % save data_nt1e2_2ns1e2_m4_4
 
 %% figure timing
-
+load data_time_5ns_nt_1e4_pt1
 figure1 = figure('Position', [100, 100, 800, 650]);
-for l = 2:5
+for l = 1:5
     loglog(ntarg_vec, fmm3d_t(:,l), '*-', 'linewidth',2);
     hold on
 end
-loglog(matlab_ntarg, matlab_t_pt, 'linewidth',2)
+% loglog(matlab_ntarg, matlab_t_pt, 'linewidth',2)
+loglog(ntarg_vec, matlab_t, 'linewidth',2)
+
 %slope
 % loglog_slope(ntarg_vec, fmm3d_t, 'fmm3d', 'k--')
-x = matlab_ntarg; y = matlab_t_pt;
+% x = matlab_ntarg; y = matlab_t_pt;
+
+x = ntarg_vec(1:8); y = matlab_t(1:8);
 logx1 = log(x); %
 logy1 = log(y);
 Const1 = polyfit(logx1, logy1, 1);
@@ -67,7 +71,7 @@ str = {['slope = ',num2str(round(slope1,4))]}; %
 annotation('textbox',dim,'String',str,'FitBoxToText','on','Fontsize',17)
 
 
-legend('$$Ns = 40^3$$','$$Ns = 60^3$$','$$Ns = 80^3$$','$$Ns = 100^3$$', 'matlab','location','northwest','interpreter','latex')
+legend('$$Ns = 20^3$$','$$Ns = 40^3$$','$$Ns = 60^3$$','$$Ns = 80^3$$','$$Ns = 100^3$$', 'matlab','location','northwest','interpreter','latex')
 xlabel('Number of target points', 'interpreter','latex')
 ylabel('Elapsed time (sec)', 'interpreter','latex')
 
