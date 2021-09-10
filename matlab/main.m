@@ -47,20 +47,20 @@ end
 % save data_nt1e2_2ns1e2_m4_4
 
 %% figure timing
-load data_time_5ns_nt_1e4_pt1
+% load('data_time_5ns_nt_1e6.mat')
 figure1 = figure('Position', [100, 100, 800, 650]);
 for l = 1:5
     loglog(ntarg_vec, fmm3d_t(:,l), '*-', 'linewidth',2);
     hold on
 end
 % loglog(matlab_ntarg, matlab_t_pt, 'linewidth',2)
-loglog(ntarg_vec, matlab_t, 'linewidth',2)
+loglog(ntarg_matlab, matlab_t, 'linewidth',2)
 
 %slope
 % loglog_slope(ntarg_vec, fmm3d_t, 'fmm3d', 'k--')
 % x = matlab_ntarg; y = matlab_t_pt;
 
-x = ntarg_vec(1:8); y = matlab_t(1:8);
+x = ntarg_matlab(1:8); y = matlab_t(1:8);
 logx1 = log(x); %
 logy1 = log(y);
 Const1 = polyfit(logx1, logy1, 1);
@@ -81,9 +81,10 @@ set(gca,'Fontsize',18);
 
 %% Fix ntarg varying nsource - fmm only
 figure2 = figure('Position', [100, 100, 800, 650]);
-loglog(Nsource_vec.^3, fmm3d_t(5, :), '*-', 'linewidth',2);
+cc = 7;
+loglog(Nsource_vec.^3, fmm3d_t(cc, :), '*-', 'linewidth',2);
 hold on
-x = Nsource_vec.^3; y = fmm3d_t(5, :);
+x = Nsource_vec.^3; y = fmm3d_t(cc, :);
 logx1 = log(x); %
 logy1 = log(y);
 Const1 = polyfit(logx1, logy1, 1);
@@ -93,7 +94,7 @@ dim = [0.65 0.20 0.0 0.01];
 str = {['slope = ',num2str(round(slope1,4))]}; %
 annotation('textbox',dim,'String',str,'FitBoxToText','on','Fontsize',17)
 
-legend(['Ntarg $$\approx$$ ', num2str(round(ntarg_vec(5)))],'Linear fit','interpreter','latex') 
+legend(['Ntarg $$=$$ ', num2str(round(ntarg_vec(cc)))],'Linear fit','interpreter','latex') 
 xlabel('Number of source points', 'interpreter','latex')
 ylabel('Elapsed time (sec)', 'interpreter','latex')
 grid on
