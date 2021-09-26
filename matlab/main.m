@@ -47,7 +47,7 @@ end
 % save data_nt1e2_2ns1e2_m4_4
 
 %% figure timing
-% load('data_time_5ns_nt_1e6.mat')
+load('data_time_5ns_nt_1e6.mat')
 figure1 = figure('Position', [100, 100, 800, 650]);
 for l = 1:5
     loglog(ntarg_vec, fmm3d_t(:,l), '*-', 'linewidth',2);
@@ -102,6 +102,7 @@ set(gca,'Fontsize',18);
 
 
 %%
+load('data_nt1e2_2ns1e2_m4_4.mat')
 figure3 =figure('Position', [100, 100, 1500, 500]);
 for i = 1:3
     subplot(1,3,i)
@@ -131,10 +132,12 @@ end
 
 %%
 figure4 =figure('Position', [100, 100, 1500, 500]);
+load('data_nt1e2_2ns1e2_m4_4.mat')
+err_v_ns100 = abs(matlabV_all - Volume);
 for i = 1:3
     subplot(1,3,i)
 %     err_v_ns50 = abs(matlabV_all - volume_ns50);
-    err_v_ns100 = abs(matlabV_all - Volume);
+    
 %     semilogy(targ_x, err_v_ns50(i,:), '--','linewidth', 3)
 %     hold on
     semilogy(targ_x, err_v_ns100(i,:), '*-','linewidth', 2, 'markersize', 4)
