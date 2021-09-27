@@ -16,8 +16,8 @@ dz = (zend - z0)/(Nz-1);
 
 
 xlev = linspace(x0, xend, Nx);
-ylev = 2.*linspace(y0, yend, Ny);
-zlev = 3.*linspace(z0, zend, Nz);
+ylev = linspace(y0, yend, Ny);
+zlev = linspace(z0, zend, Nz);
 xyz = make_grid(xlev, ylev, zlev);
 
 xlev_mid = xlev(1:end-1) + dx/2;
@@ -30,10 +30,14 @@ xyz = make_grid(xlev_mid, ylev_mid, zlev_mid);
 
 %% target points
 
-ntarg = length(targ_x);
-targ_yz = 0.5*ones(3, ntarg);
-targ_yz(1,:) = targ_x;
-targ = targ_yz;
+targ_x0 = -4; targ_xend = 4;
+targ_xlev = linspace(targ_x0, targ_xend, ntarg);
+targ_ylev = 0.5*ones(1, ntarg);
+targ_zlev = targ_ylev;
+
+[targ_x, targ_y, targ_z] = ndgrid(targ_xlev, targ_ylev, targ_zlev);
+targ = [targ_x(:)'; targ_y(:)'; targ_z(:)'];
+targ = targ(:,1:ntarg);
 
 
 %% Ck vector

@@ -1,38 +1,8 @@
 function xyz = make_grid(xlev, ylev, zlev)
 
-    %% setup grid points
-    % Inputs are "lev" and "Nx"
-    % Works only for cube-kind grid 
-    % Need to have same range and spacing for each direction
-%     xvec = repmat(lev, 1, Nx);
-%     yvec = [];
-% 
-%     for x = 1:Nx
-%         yvec = [yvec, repmat(lev(x), 1, Nx)];
-%     end
-%     
-%     xy = [xvec; yvec];
-%     xyz = [];
-%     
-%     for z = 1:Nx
-%         zlev = [xy; lev(z)*ones(1, Nx^2)];
-%         xyz = [xyz, zlev];
-%     end
+% Best one - From ndgrid to FMM3D Package form 
 
-%new version using ndgrid
     [X,Y,Z] = ndgrid(xlev, ylev, zlev);
-    xyz = [];
+    xyz = [X(:)'; Y(:)'; Z(:)'];
     
-    for z = 1:length(zlev)
-        
-        for y = 1:length(ylev)
-            y_var = [X(:,1,1), Y(:,y,1), Z(:,1,z)]';
-            xyz = [xyz, y_var];
-        end
-        
-    end
-
-%% Best one
-%     [X,Y,Z] = ndgrid(xlev, ylev, zlev);
-%     xyz = [X(:)'; Y(:)'; Z(:)'];
 end
