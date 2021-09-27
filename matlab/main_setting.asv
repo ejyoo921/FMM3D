@@ -2,10 +2,13 @@
 eps = 1e-5;
 
 %% source points
+Nx = Nsource;
+Ny = Nsource;
+Nz = Nsource;
 
 x0 = -1; xend = 1;
 y0 = x0; yend = xend;
-z0 = -1; zend = 1;
+z0 = x0; zend = xend;
 
 
 lev = linspace(x0, xend, Nx);
@@ -22,24 +25,20 @@ xlev_mid = xlev(1:end-1) + dx/2;
 ylev_mid = ylev(1:end-1) + dy/2;
 zlev_mid = zlev(1:end-1) + dz/2;
 
-ns = (Nx-1)*(Ny-1)*(Nz-1); %total number of source pts 
+ns = (Nx-1)^3; %total number of source pts 
 xyz = make_grid(xlev_mid, ylev_mid, zlev_mid);
 
 
 %% target points
 
+targ_x0 = -0.5; targ_xend = 0.5;
+targ_xlev = linspace(targ_x0, targ_xend, ntarg);
 
-targ_x0 = -1; targ_xend = 1;
-targ_xlev = linspace(targ_x0, targ_xend, nt_x);
+targ_y0 = -0.5; targ_yend = 0.5;
+targ_ylev = linspace(targ_y0, targ_yend, ntarg);
 
-targ_y0 = -1; targ_yend = 1;
-targ_ylev = linspace(targ_y0, targ_yend, nt_y);
+targ_zlev = targ_ylev;
 
-targ_z0 = -1; targ_zend = 1;
-targ_zlev = linspace(targ_z0, targ_zend, nt_z);
-
-
-nt = nt_x*nt_y*nt_z;
 targ = make_grid(targ_xlev, targ_ylev, targ_zlev);
 
 [X, Y, Z] = ndgrid(targ_xlev, targ_ylev, targ_zlev);

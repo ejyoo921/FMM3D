@@ -1,4 +1,4 @@
-function [res, matlab_Vtime] = fmm_test_analytic(Ck, x0, y0, z0, xspan, yspan, zspan, tol)
+function [res, matlab_Vtime] = fmm_test_analytic(Ck_fun, x0, y0, z0, xspan, yspan, zspan, tol)
 
 % analytic values pack
 tic
@@ -6,14 +6,12 @@ tic
 % x0 = 2; 
 % y0 = 2; 
 % z0 = 2;
-% 
-% Ck = 1;
 
-fun1 = @(x,y,z) Ck./(sqrt((x-x0).^2 + (y-y0).^2 + (z-z0).^2));
+fun1 = @(x,y,z) Ck_fun(x,y,z)./(sqrt((x-x0).^2 + (y-y0).^2 + (z-z0).^2));
 
-fun21 = @(x,y,z) Ck.*(x-x0).*(z-z0)./(sqrt((x-x0).^2 + (y-y0).^2 + (z-z0).^2)).^3;
-fun22 = @(x,y,z) Ck.*(y-y0).*(z-z0)./(sqrt((x-x0).^2 + (y-y0).^2 + (z-z0).^2)).^3;
-fun23 = @(x,y,z) Ck.*(z-z0).*(z-z0)./(sqrt((x-x0).^2 + (y-y0).^2 + (z-z0).^2)).^3;
+fun21 = @(x,y,z) Ck_fun(x,y,z).*(x-x0).*(z-z0)./(sqrt((x-x0).^2 + (y-y0).^2 + (z-z0).^2)).^3;
+fun22 = @(x,y,z) Ck_fun(x,y,z).*(y-y0).*(z-z0)./(sqrt((x-x0).^2 + (y-y0).^2 + (z-z0).^2)).^3;
+fun23 = @(x,y,z) Ck_fun(x,y,z).*(z-z0).*(z-z0)./(sqrt((x-x0).^2 + (y-y0).^2 + (z-z0).^2)).^3;
 
 xmin = xspan(1); xmax = xspan(end);
 ymin = yspan(1); ymax = yspan(end);

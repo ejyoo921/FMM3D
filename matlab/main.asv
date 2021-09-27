@@ -27,31 +27,22 @@ m = nt_y/2; % where do you want to slice?
 xx = squeeze(X(:,m,:));
 zz = squeeze(Z(:,m,:));
 
-vv = squeeze(vol_Z(:,m,:));
+vv = squeeze(vol_Z(:,:,m));
 
 % get images
-h=figure;
 subplot(1,2,1)
-surf(xx ,zz ,vv);
-set(h, 'Position', [100, 100, 800, 600]); 
+surf(xx ,zz ,vv)
 set(gca,'Fontsize',20);
-
 xlabel('$$x$$','fontsize',30,'interpreter','latex')
 ylabel('$$z$$', 'fontsize',30,'interpreter','latex')
 
-hsp1 = get(gca, 'Position');
-
-
 subplot(1,2,2)
-% vv need to be transposed! 
-% imagesc(xx(:,1), zz(1,:) ,vv'); 
-pcolor(xx(:,1), zz(1,:) ,vv'); %grid on
+% imagesc(xx(:,1), zz(1,:) ,vv); 
+pcolor(xx(:,1), zz(1,:) ,vv); %grid on
 
 set(gca,'Fontsize',20);
 xlabel('$$x$$','fontsize',30,'interpreter','latex')
 ylabel('$$z$$', 'fontsize',30,'interpreter','latex')
 
 colorbar
-hsp2 = get(gca, 'Position');             % Get 'Position' for (2,1,2)
-set(gca, 'Position', [hsp2(1:3)  hsp1(4)])
-
+axis square
