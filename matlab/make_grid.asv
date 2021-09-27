@@ -19,20 +19,8 @@ function xyz = make_grid(xlev, ylev, zlev)
 %         xyz = [xyz, zlev];
 %     end
 
-%new version using ndgrid
-    [X,Y,Z] = ndgrid(xlev, ylev, zlev);
-    xyz = [];
     
-    for z = 1:length(zlev)
-        
-        for y = 1:length(ylev)
-            y_var = [X(:,1,1), Y(:,y,1), Z(:,1,z)]';
-            xyz = [xyz, y_var];
-        end
-        
-    end
-
-%% Best one
-%     [X,Y,Z] = ndgrid(xlev, ylev, zlev);
-%     xyz = [X(:)'; Y(:)'; Z(:)'];
+    %% new version using ndgrid
+    [X,Y,Z] = nd
+    
 end
