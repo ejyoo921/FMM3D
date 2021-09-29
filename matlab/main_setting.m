@@ -39,7 +39,7 @@ targ_z0 = -1; targ_zend = 1;
 targ_zlev = linspace(targ_z0, targ_zend, nt_z);
 
 
-nt = nt_x*nt_y*nt_z;
+nt = nt_x * nt_y * nt_z;
 targ = make_grid(targ_xlev, targ_ylev, targ_zlev);
 
 [X, Y, Z] = ndgrid(targ_xlev, targ_ylev, targ_zlev);

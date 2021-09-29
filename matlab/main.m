@@ -18,8 +18,8 @@ main_setting
 [Volume, fmm3d_time] = volume_integral(xyz, dx, targ, Ck);
 [vol_X, vol_Y, vol_Z] = make_grid_inv(Volume, nt_x, nt_y, nt_z);
 
-% main_matlab_sol
-% [mb_X, mb_Y, mb_Z] = make_grid_inv(matlabV_all, ntarg, ntarg, ntarg);
+main_matlab_sol
+[mb_X, mb_Y, mb_Z] = make_grid_inv(matlabV_all, nt_x, nt_y, nt_z);
 
 %% plot setup
 m = nt_y/2; % where do you want to slice?
@@ -28,11 +28,16 @@ xx = squeeze(X(:,m,:));
 zz = squeeze(Z(:,m,:));
 
 vv = squeeze(vol_Z(:,m,:));
+mb_vv = squeeze(mb_Z(:,m,:));
+
+error_vv = abs(squeeze(mb_Z(:,m,:)) - squeeze(vol_Z(:,m,:)));
 
 % get images
 h=figure;
 subplot(1,2,1)
-surf(xx ,zz ,vv);
+% surf(xx ,zz ,vv);
+surf(xx ,zz ,error_vv);
+
 set(h, 'Position', [100, 100, 800, 600]); 
 set(gca,'Fontsize',20);
 
@@ -45,7 +50,8 @@ hsp1 = get(gca, 'Position');
 subplot(1,2,2)
 % vv need to be transposed! 
 % imagesc(xx(:,1), zz(1,:) ,vv'); 
-pcolor(xx(:,1), zz(1,:) ,vv'); %grid on
+% pcolor(xx(:,1), zz(1,:) ,vv'); %grid on
+pcolor(xx(:,1), zz(1,:) ,error_vv'); %grid on
 
 set(gca,'Fontsize',20);
 xlabel('$$x$$','fontsize',30,'interpreter','latex')

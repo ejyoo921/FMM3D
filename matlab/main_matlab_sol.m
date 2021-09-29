@@ -5,7 +5,7 @@ zspan = [targ_z0 targ_zend];
 
 tol = 1e-5;
 
-matlabV_all = zeros(3, ntarg^3);
+matlabV_all = zeros(3, nt);
 matlabV_time_all = 0;
 
 Ck_fun = @(x,y,z) exp(-(x).^2 -(y).^2 -(z).^2);
