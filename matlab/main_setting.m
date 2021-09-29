@@ -3,9 +3,9 @@ eps = 1e-5;
 
 %% source points
 
-x0 = -1; xend = 1;
+x0 = -2; xend = 2;
 y0 = x0; yend = xend;
-z0 = -1; zend = 1;
+z0 = -5; zend = 5;
 
 
 lev = linspace(x0, xend, Nx);
@@ -29,13 +29,13 @@ xyz = make_grid(xlev_mid, ylev_mid, zlev_mid);
 %% target points
 
 
-targ_x0 = -1; targ_xend = 1;
+targ_x0 = -2; targ_xend = 2;
 targ_xlev = linspace(targ_x0, targ_xend, nt_x);
 
-targ_y0 = -1; targ_yend = 1;
+targ_y0 = -2; targ_yend = 2;
 targ_ylev = linspace(targ_y0, targ_yend, nt_y);
 
-targ_z0 = -1; targ_zend = 1;
+targ_z0 = -5; targ_zend = 5;
 targ_zlev = linspace(targ_z0, targ_zend, nt_z);
 
 
