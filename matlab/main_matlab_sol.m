@@ -1,14 +1,12 @@
 %% analytic-kind solution
-xspan = [targ_x0, targ_xend];
-yspan = [targ_y0, targ_yend];
-zspan = [targ_z0 targ_zend];
+xspan = [x0, xend];
+yspan = [y0, yend];
+zspan = [z0 zend];
 
-tol = 1e-5;
+tol = 1e-15;
 
 matlabV_all = zeros(3, nt);
 matlabV_time_all = 0;
-
-Ck_fun = @(x,y,z) exp(-(x).^2 -(y).^2 -(z).^2);
 
 for t = 1:nt
     targ_t = targ(:,t);
