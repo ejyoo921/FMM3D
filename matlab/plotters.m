@@ -1,29 +1,34 @@
-Clear
-Close all
+% Clear
+% Close all
 
-ntarg_vec = 1*round(logspace(1,2,10));
+ntarg_vec = 1*round(logspace(1,2,1));
+nt_x = 41;
+nt_y = 1;
+nt_z = 1;
+
 Nsource_vec = 1*round(logspace(1,2,10));
 
 % fmm_sol_all = zeros(length(ntarg_vec), length(Nsource_vec));
 
-% error_inf = zeros(1, length(Nsource_vec));
-% error_L2 = zeros(1, length(Nsource_vec));
+error_inf = zeros(1, length(Nsource_vec));
+error_L2 = zeros(1, length(Nsource_vec));
 
 
-% fmm3d_t = zeros(length(ntarg_vec), length(Nsource_vec));
+fmm3d_t = zeros(length(ntarg_vec), length(Nsource_vec));
 % matlab_t = zeros(length(ntarg_vec), 1);
 
-for k = 1:length(ntarg_vec)-2
-    for s = 5:length(Nsource_vec)
+for k = 1:length(ntarg_vec)
+    for s = 1:length(Nsource_vec)
 
-        targ_x = linspace(-4, 4, ntarg_vec(k).^3);
-        Nsource = Nsource_vec(s);
-
+        Nx = Nsource_vec(s);
+        Ny = Nsource_vec(s);
+        Nz = Nsource_vec(s);
+        
         main_setting
     % 
         [Volume, fmm3d_time] = volume_integral(xyz, dx, targ, Ck);
-    %     error_inf(k,s) = norm(Volume-matlabV_all, inf);
-    %     error_L2(k,s) = norm(Volume-matlabV_all, 2);
+        error_inf(k,s) = norm(Volume-matlabV_all, inf)
+        error_L2(k,s) = norm(Volume-matlabV_all, 2);
 
         fmm3d_t(k,s) = fmm3d_time;
 
@@ -32,7 +37,7 @@ for k = 1:length(ntarg_vec)-2
 %     matlab_t(k) = matlabV_time_all;
 %     
 %     matlabV_time_all = 0;
-%     fmm3d_time = 0;
+    fmm3d_time = 0;
     k
 end
 
@@ -163,7 +168,7 @@ end
 
 figure5 = figure('Position', [100, 100, 800, 650]);
 
-x = (xend-x0)./(Nsource_vec-1); y = error_inf;
+x = (xend-x0)./(Nsource_vec(1:8)-1); y = error_inf(1:8);
 loglog(x, y, '*-', 'linewidth', 2)
 hold on
 xlabel('$$\Delta x$$ ($$ = \Delta y = \Delta z$$)', 'interpreter','latex')
