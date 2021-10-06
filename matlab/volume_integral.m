@@ -1,7 +1,7 @@
-function [Volume, fmm3d_time_all] = volume_integral(xyz, dx, targ, Ck)
+function [Volume, fmm3d_time_all] = volume_integral(xyz, dx, dy, dz, targ, Ck)
 % xyz = numerical grid
 % targ = target points
-
+eps = 1e-10;
 % few setups 
 pg = 1;
 pgt = 1;
@@ -44,7 +44,7 @@ for j = 1:3
     tic
     U = lfmm3d(eps,srcinfo,pg,targ,pgt);
     fmm3d_time_all = fmm3d_time_all + toc;
-    Volume_pt1(j,:) = U.pottarg * (dx^3);
+    Volume_pt1(j,:) = U.pottarg * (dx*dy*dz);
 end
 
 Volume_pt2 = zeros(3, ntarg);
@@ -71,7 +71,7 @@ for j = 1:3
     fmm3d_time_all = fmm3d_time_all + toc;
     
     x3m = targ(end,:);
-    Volume_pt2(j,:) = x3m.*U_targ.pottarg .* (dx^3);
+    Volume_pt2(j,:) = x3m.*U_targ.pottarg .* (dx*dy*dz);
 end
 
 Volume = Volume_pt1 - Volume_pt2;
