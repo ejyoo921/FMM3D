@@ -74,7 +74,10 @@ for j = 1:3
     Volume_pt2(j,:) = x3m.*U_targ.pottarg .* (dx*dy*dz);
 end
 
+% Add one more part : direct computation when source == targ
+
 Volume = Volume_pt1 - Volume_pt2;
+
 
 end
 
