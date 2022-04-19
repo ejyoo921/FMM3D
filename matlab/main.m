@@ -15,10 +15,13 @@ Nz = 31;
 
 main_setting
 
-[Volume, fmm3d_time] = volume_integral(xyz, dx, targ, Ck);
+% FMM3D solution and grid
+[Volume, fmm3d_time_all] = volume_integral(xyz, dx, dy, dz, targ, Ck);
 [vol_X, vol_Y, vol_Z] = make_grid_inv(Volume, nt_x, nt_y, nt_z);
 
+% solve the same problem w/ matlab integral3
 main_matlab_sol
+% re-organize the values for plots
 [mb_X, mb_Y, mb_Z] = make_grid_inv(matlabV_all, nt_x, nt_y, nt_z);
 
 Error_abs = abs(Volume - matlabV_all);
@@ -44,7 +47,7 @@ for i = 1:3
     xlabel('$$x$$','interpreter','latex')
     
     
-    legend(['$$Ns = $$',num2str(ns),'$$^3$$'],'real','interpreter','latex')
+    legend(['$$Ns = $$',num2str(ns)],'real','interpreter','latex')
     legend('Location','southwest')
     grid on
     set(gca,'Fontsize',18);
@@ -69,48 +72,51 @@ for i = 1:3
     xlabel('$$x$$','interpreter','latex')
     
     
-    legend(['$$Ns = $$',num2str(ns),'$$^3$$'],'interpreter','latex')
-    legend('Location','southwest')
+    legend(['$$Ns = $$',num2str(ns)],'interpreter','latex')
+    legend('Location','northeast')
     grid on
     set(gca,'Fontsize',18);
 end
 
 
 %% plot setup
-m = nt_y/2; % where do you want to slice?
 
-xx = squeeze(X(:,:,m));
-yy = squeeze(Y(:,:,m));
+% tried to re-run this part on 04/19/22 but not working.
 
-vv = squeeze(vol_Z(:,:,m));
-
-mb_vv = squeeze(mb_Z(:,m,:));
-error_vv = abs(squeeze(mb_Z(:,m,:)) - squeeze(vol_Z(:,m,:)));
-
-% get images
-h=figure;
-subplot(1,2,1)
-% surf(xx ,yy ,vv);
-surf(xx ,yy ,error_vv);
-
-set(h, 'Position', [100, 100, 800, 600]); 
-set(gca,'Fontsize',20);
-
-xlabel('$$x$$','fontsize',30,'interpreter','latex')
-ylabel('$$y$$', 'fontsize',30,'interpreter','latex')
-
-hsp1 = get(gca, 'Position');
-
-
-subplot(1,2,2)
-% vv need to be transposed! 
-pcolor(xx(:,1), yy(1,:) ,error_vv'); %grid on
-
-set(gca,'Fontsize',20);
-xlabel('$$x$$','fontsize',30,'interpreter','latex')
-ylabel('$$y$$', 'fontsize',30,'interpreter','latex')
-
-colorbar
-hsp2 = get(gca, 'Position');             % Get 'Position' for (2,1,2)
-set(gca, 'Position', [hsp2(1:3)  hsp1(4)])
+% m = floor(nt_y/2)+1; % where do you want to slice?
+% 
+% xx = squeeze(X(:,:,m));
+% yy = squeeze(Y(:,:,m));
+% 
+% vv = squeeze(vol_Z(:,:,m));
+% 
+% mb_vv = squeeze(mb_Z(:,m,:));
+% error_vv = abs(squeeze(mb_Z(:,m,:)) - squeeze(vol_Z(:,m,:)));
+% 
+% % get images
+% h=figure;
+% subplot(1,2,1)
+% % surf(xx ,yy ,vv);
+% surf(xx ,yy ,error_vv);
+% 
+% set(h, 'Position', [100, 100, 800, 600]); 
+% set(gca,'Fontsize',20);
+% 
+% xlabel('$$x$$','fontsize',30,'interpreter','latex')
+% ylabel('$$y$$', 'fontsize',30,'interpreter','latex')
+% 
+% hsp1 = get(gca, 'Position');
+% 
+% 
+% subplot(1,2,2)
+% % vv need to be transposed! 
+% pcolor(xx(:,1), yy(1,:) ,error_vv'); %grid on
+% 
+% set(gca,'Fontsize',20);
+% xlabel('$$x$$','fontsize',30,'interpreter','latex')
+% ylabel('$$y$$', 'fontsize',30,'interpreter','latex')
+% 
+% colorbar
+% hsp2 = get(gca, 'Position');             % Get 'Position' for (2,1,2)
+% set(gca, 'Position', [hsp2(1:3)  hsp1(4)])
 

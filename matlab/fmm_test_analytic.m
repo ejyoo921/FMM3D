@@ -2,10 +2,6 @@ function [res, matlab_Vtime] = fmm_test_analytic(Ck_fun, x0, y0, z0, xspan, yspa
 
 % analytic values pack
 tic
-% Ck = perturb_Ck
-% x0 = 2; 
-% y0 = 2; 
-% z0 = 2;
 
 fun1 = @(x,y,z) Ck_fun(x,y,z)./(sqrt((x-x0).^2 + (y-y0).^2 + (z-z0).^2));
 
