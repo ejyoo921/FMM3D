@@ -32,10 +32,10 @@ xyz = make_grid(xlev_mid, ylev_mid, zlev_mid);
 targ_x0 = -4; targ_xend = 4;
 targ_xlev = linspace(targ_x0, targ_xend, nt_x);
 
-targ_y0 = 0.5; targ_yend = 0.5;
+targ_y0 = 0.0; targ_yend = 0.0;
 targ_ylev = linspace(targ_y0, targ_yend, nt_y);
 
-targ_z0 = 0.5; targ_zend = 0.5;
+targ_z0 = 0.0; targ_zend = 0.0;
 targ_zlev = linspace(targ_z0, targ_zend, nt_z);
 
 

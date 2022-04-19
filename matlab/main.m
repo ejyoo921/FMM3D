@@ -9,9 +9,9 @@ nt_x = 41;
 nt_y = 1;
 nt_z = 1;
 
-Nx = 31;
-Ny = 31;
-Nz = 31;
+Nx = 10;
+Ny = 10;
+Nz = 10;
 
 main_setting
 

@@ -78,6 +78,26 @@ end
 
 Volume = Volume_pt1 - Volume_pt2;
 
+% Singularity check
+singular = zeros(size(xyz,2), size(targ,2));
+CG_singular = [0; 0; 0];
+for ii = 1:size(xyz,2)
+    for jj = 1:size(targ,2)
+        
+        if xyz(:,ii) == targ(:,jj)
+            singular(ii, jj) = 1; %missing part
+            
+            r_vec = xyz(:,ii) - targ(:,jj);
+            r_mn = norm(r_vec);
+            hat_k = [0;0;1];
+            G_ij = 0; % what is this?
+            
+            CG_singular = Ck(ii).* (G_ij); 
+            Volume(:,jj) = Volume(:,jj) + CG_singular;
+        end
+        
+    end
+end
 
 end
 
