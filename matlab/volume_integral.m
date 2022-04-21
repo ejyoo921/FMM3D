@@ -78,21 +78,25 @@ end
 
 Volume = Volume_pt1 - Volume_pt2;
 
-% Singularity check
+% Add singularity point
 singular = zeros(size(xyz,2), size(targ,2));
-CG_singular = [0; 0; 0];
 for ii = 1:size(xyz,2)
     for jj = 1:size(targ,2)
         
         if xyz(:,ii) == targ(:,jj)
             singular(ii, jj) = 1; %missing part
+            x0 = targ(1,jj);
+            y0 = targ(2,jj);
+            z0 = targ(3,jj);
             
-            r_vec = xyz(:,ii) - targ(:,jj);
-            r_mn = norm(r_vec);
-            hat_k = [0;0;1];
-            G_ij = 0; % what is this?
+            % small box around the singularity point
+            xspan = [x0 - dx/2, x0 + dx/2];
+            yspan = [y0 - dy/2, y0 + dy/2];
+            zspan = [z0 - dz/2, z0 + dz/2];
             
-            CG_singular = Ck(ii).* (G_ij); 
+            Ck_fun = @(x,y,z) Ck(ii);
+            [CG_singular, ~] = fmm_test_analytic(Ck_fun, x0, y0, z0, xspan, yspan, zspan, 1e-3);
+            
             Volume(:,jj) = Volume(:,jj) + CG_singular;
         end
         

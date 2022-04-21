@@ -3,7 +3,7 @@ xspan = [x0, xend];
 yspan = [y0, yend];
 zspan = [z0 zend];
 
-tol = 1e-15;
+tol = 1e-6;
 
 matlabV_all = zeros(3, nt);
 matlabV_time_all = 0;

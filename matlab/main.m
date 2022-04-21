@@ -5,13 +5,14 @@ close all
 %% begin - Main function to run FMM3D package 
 
 
-nt_x = 41;
+nt_x = 81;
 nt_y = 1;
 nt_z = 1;
 
-Nx = 10;
-Ny = 10;
-Nz = 10;
+%something is werid when Nx,Ny,Nz are even numbers
+Nx = 11;
+Ny = 11;
+Nz = 11;
 
 main_setting
 
