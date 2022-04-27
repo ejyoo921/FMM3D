@@ -5,7 +5,7 @@ close all
 %% begin - Main function to run FMM3D package 
 
 
-nt_x = 81;
+nt_x = 41;
 nt_y = 1;
 nt_z = 1;
 

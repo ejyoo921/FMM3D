@@ -83,7 +83,7 @@ singular = zeros(size(xyz,2), size(targ,2));
 for ii = 1:size(xyz,2)
     for jj = 1:size(targ,2)
         
-        if xyz(:,ii) == targ(:,jj)
+        if norm(xyz(:,ii) - targ(:,jj)) < 1e-6
             singular(ii, jj) = 1; %missing part
             x0 = targ(1,jj);
             y0 = targ(2,jj);
@@ -95,7 +95,7 @@ for ii = 1:size(xyz,2)
             zspan = [z0 - dz/2, z0 + dz/2];
             
             Ck_fun = @(x,y,z) Ck(ii);
-            [CG_singular, ~] = fmm_test_analytic(Ck_fun, x0, y0, z0, xspan, yspan, zspan, 1e-3);
+            [CG_singular, ~] = fmm_singular(Ck_fun, x0, y0, z0, xspan, yspan, zspan, 1e-3);
             
             Volume(:,jj) = Volume(:,jj) + CG_singular;
         end
