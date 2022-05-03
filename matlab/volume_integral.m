@@ -1,4 +1,4 @@
-function [Volume, fmm3d_time_all] = volume_integral(xyz, dx, dy, dz, targ, Ck)
+function [Volume, fmm3d_time_all] = volume_integral(xyz, dx, dy, dz, targ, Ck, CG_singular)
 % xyz = numerical grid
 % targ = target points
 eps = 1e-10;
@@ -85,19 +85,7 @@ for ii = 1:size(xyz,2)
         
         if xyz(:,ii) == targ(:,jj)
             singular(ii, jj) = 1; %missing part
-            x0 = targ(1,jj);
-            y0 = targ(2,jj);
-            z0 = targ(3,jj);
-            
-            % small box around the singularity point
-            xspan = [x0 - dx/2, x0 + dx/2];
-            yspan = [y0 - dy/2, y0 + dy/2];
-            zspan = [z0 - dz/2, z0 + dz/2];
-            
-            Ck_fun = @(x,y,z) Ck(ii);
-            [CG_singular, ~] = fmm_test_analytic(Ck_fun, x0, y0, z0, xspan, yspan, zspan, 1e-3);
-            
-            Volume(:,jj) = Volume(:,jj) + CG_singular;
+            Volume(:,jj) = Volume(:,jj) + Ck(ii).*CG_singular;
         end
         
     end
