@@ -83,7 +83,7 @@ singular = zeros(size(xyz,2), size(targ,2));
 for ii = 1:size(xyz,2)
     for jj = 1:size(targ,2)
         
-        if xyz(:,ii) == targ(:,jj)
+        if norm(xyz(:,ii) - targ(:,jj)) < 1e-6
             singular(ii, jj) = 1; %missing part
             Volume(:,jj) = Volume(:,jj) + Ck(ii).*CG_singular;
         end
