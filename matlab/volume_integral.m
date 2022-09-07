@@ -1,8 +1,8 @@
-function [Volume, fmm3d_time_all] = volume_integral(xyz, dx, dy, dz, targ, Ck, CG_singular)
+function [Volume, fmm3d_time_all] = volume_integral(xyz, dx, dy, dz, targ, Ck, CG_singular, vel_compute)
 % xyz = numerical grid
 % targ = target points
 eps = 1e-10;
-% few setups 
+% few setups
 pg = 1;
 pgt = 1;
 
@@ -18,11 +18,11 @@ for n = 1:ns
     cn = Ck(n);
     xn = xyz(:,n);
     x3n = xn(3);
-
+    
     Cnx3n(n) = cn * x3n;
 end
 
-% We compute each element in the volume integral 
+% We compute each element in the volume integral
 Volume_pt1 = zeros(3, ntarg);
 
 fmm3d_time_all = 0;
@@ -36,7 +36,7 @@ for j = 1:3
         vj2 = [zeros(1,ns); Cnx3n; zeros(1,ns)];
         srcinfo.dipoles = vj2;
     else % j==3
-        srcinfo.charges = Ck; %for the very first integral 
+        srcinfo.charges = Ck; %for the very first integral
         vj3 = [zeros(1,ns); zeros(1,ns); Cnx3n];
         srcinfo.dipoles = vj3;
     end
@@ -50,7 +50,7 @@ end
 Volume_pt2 = zeros(3, ntarg);
 
 for j = 1:3
-        
+    
     % for extra term
     if j == 1
         srcinfo.charges = zeros(1,ns);
@@ -77,22 +77,24 @@ end
 % Add one more part : direct computation when source == targ
 
 Volume = Volume_pt1 - Volume_pt2;
-
 % Add singularity point
-singular = zeros(size(xyz,2), size(targ,2));
-for ii = 1:size(xyz,2)
-    for jj = 1:size(targ,2)
-        
-        if norm(xyz(:,ii) - targ(:,jj)) < 1e-6
-            singular(ii, jj) = 1; %missing part
-            Volume(:,jj) = Volume(:,jj) + Ck(ii).*CG_singular;
+
+
+if vel_compute
+    for ii = 1:size(xyz,2)
+        Volume(:,ii) = Volume(:,ii) + Ck(ii).*CG_singular;
+    end
+else
+    for ii = 1:size(xyz,2)
+        for jj = 1:size(targ,2)
+            if norm(xyz(:,ii) - targ(:,jj)) < 1e-6
+                Volume(:,jj) = Volume(:,jj) + Ck(ii).*CG_singular;
+            end
         end
-        
     end
 end
 
 end
-
 
 
 
