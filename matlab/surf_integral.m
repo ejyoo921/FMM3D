@@ -1,5 +1,6 @@
-function [slp_fmm, fmm3d_time_all] = surf_integral(xyz, dx, dy, dz, targ, f_bie)
-% xyz = numerical grid
+function slp_fmm = surf_integral(posint, dx, dy, dz, targ, bie_f)
+% posint = center of square faces : size should be 3 x something
+% bie_f also has 3 x something form
 % targ = target points
 eps = 1e-10;
 
@@ -7,68 +8,96 @@ eps = 1e-10;
 pg = 1;
 pgt = 1;
 
-ns = size(xyz,2);
-srcinfo.sources = xyz; %xj (R3 x N)
+ns = size(posint,2);
+srcinfo.sources = posint; %xj (3 x N)
 
 ntarg = size(targ,2);
 
-% store x3m - C3n * x3n constant for each n
-Cnx3n = zeros(1,ns);
-for n = 1:ns
-    cn = f_bie(n);
-    xn = xyz(:,n);
-    x3n = xn(3);
+%% For a fixed j term - need to do a dot product first 
 
-    Cnx3n(n) = cn * x3n;
-end
 
 % We compute each element in the volume integral 
 slp_pt1 = zeros(3, ntarg);
+v_mx = zeros(3, ns);
+H_11_sum = zeros(1, ntarg);
+H_12_sum = zeros(1, ntarg);
+H_13_sum = zeros(1, ntarg);
 
-fmm3d_time_all = 0;
 for j = 1:3
     if j == 1
-        srcinfo.charges = zeros(1,ns);
-        vj1 = [Cnx3n; zeros(1,ns); zeros(1,ns)];
-        srcinfo.dipoles = vj1;
+        for i = 1:3
+            srcinfo.charges = bie_f(i,:); 
+            v_mx(i,:) = bie_f(i,:).*posint(i,:);
+            srcinfo.dipoles = v_mx;
+            H_11 = lfmm3d(eps,srcinfo,pg,targ,pgt);
+            H_11_sum = H_11_sum + H_11.pottarg;
+        end
+        slp_pt1(j,:) = H_11_sum * (dx*dy*dz);
+
     elseif j == 2
-        srcinfo.charges = zeros(1,ns);
-        vj2 = [zeros(1,ns); Cnx3n; zeros(1,ns)];
-        srcinfo.dipoles = vj2;
+        for i = 1:3
+            srcinfo.charges = bie_f(i,:);
+            v_mx(i,:) = bie_f(i,:).*posint(i,:);
+            srcinfo.dipoles = v_mx;
+            H_12 = lfmm3d(eps,srcinfo,pg,targ,pgt);
+            H_12_sum = H_12_sum + H_12.pottarg;
+        end
+        slp_pt1(j,:) = H_12_sum * (dx*dy*dz);
+
     else % j==3
-        srcinfo.charges = f_bie; %for the very first integral 
-        vj3 = [zeros(1,ns); zeros(1,ns); Cnx3n];
-        srcinfo.dipoles = vj3;
+        for i = 1:3
+            srcinfo.charges = bie_f(i,:);
+            v_mx(i,:) = bie_f(i,:).*posint(i,:);
+            srcinfo.dipoles = v_mx;
+            H_13 = lfmm3d(eps,srcinfo,pg,targ,pgt);
+            H_13_sum = H_13_sum + H_13.pottarg;
+        end
+        slp_pt1(j,:) = H_13_sum * (dx*dy*dz);
+
     end
-    
-    tic
-    U = lfmm3d(eps,srcinfo,pg,targ,pgt);
-    fmm3d_time_all = fmm3d_time_all + toc;
-    slp_pt1(j,:) = U.pottarg * (dx*dy*dz);
+   
 end
 
+%work on this after lunch!
 slp_pt2 = zeros(3, ntarg);
+srcinfo.charges = zeros(1,ns);
 
+v_mx2 = zeros(3, ns);
+H_21_sum = zeros(1, ntarg);
+H_22_sum = zeros(1, ntarg);
+H_23_sum = zeros(1, ntarg);
+% for extra term
 for j = 1:3
-        
-    % for extra term
     if j == 1
-        srcinfo.charges = zeros(1,ns);
-        vj1 = [f_bie; zeros(1,ns); zeros(1,ns)];
-        srcinfo.dipoles = vj1;
+        for i = 1:3
+            v_mx2(i,:) = bie_f(i,:);
+            srcinfo.dipoles = v_mx2;
+            H_21 = lfmm3d(eps,srcinfo,pg,targ,pgt);
+            H_21_sum = H_21_sum + H_21.pottarg;
+        end
+        slp_pt2(j,:) = targ(j,:).*H_21_sum * (dx*dy*dz);
+
     elseif j == 2
-        srcinfo.charges = zeros(1,ns);
-        vj2 = [zeros(1,ns); f_bie; zeros(1,ns)];
-        srcinfo.dipoles = vj2;
+        for i = 1:3
+            v_mx2(i,:) = bie_f(i,:);
+            srcinfo.dipoles = v_mx2;
+            H_22 = lfmm3d(eps,srcinfo,pg,targ,pgt);
+            H_22_sum = H_22_sum + H_22.pottarg;
+        end
+        slp_pt2(j,:) = targ(j,:).*H_22_sum * (dx*dy*dz);
+
     else % j==3
-        srcinfo.charges = zeros(1,ns);
-        vj3 = [zeros(1,ns); zeros(1,ns); f_bie];
-        srcinfo.dipoles = vj3;
+        for i = 1:3
+            v_mx2(i,:) = bie_f(i,:);
+            srcinfo.dipoles = v_mx2;
+            H_23 = lfmm3d(eps,srcinfo,pg,targ,pgt);
+            H_23_sum = H_23_sum + H_23.pottarg;
+        end
+        slp_pt2(j,:) = targ(j,:).*H_23_sum * (dx*dy*dz);
+
     end
     
-    tic
     U_targ = lfmm3d(eps,srcinfo,pg,targ,pgt);
-    fmm3d_time_all = fmm3d_time_all + toc;
     
     x3m = targ(end,:);
     slp_pt2(j,:) = x3m.*U_targ.pottarg .* (dx*dy*dz);
