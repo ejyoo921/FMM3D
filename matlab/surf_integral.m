@@ -13,99 +13,118 @@ srcinfo.sources = posint; %xj (3 x N)
 
 ntarg = size(targ,2);
 
-%% For a fixed j term - need to do a dot product first 
-
-
 % We compute each element in the volume integral 
+%% part 1
 slp_pt1 = zeros(3, ntarg);
-v_mx = zeros(3, ns);
+
 H_11_sum = zeros(1, ntarg);
 H_12_sum = zeros(1, ntarg);
 H_13_sum = zeros(1, ntarg);
 
-for j = 1:3
-    if j == 1
-        for i = 1:3
-            srcinfo.charges = bie_f(i,:); 
-            v_mx(i,:) = bie_f(i,:).*posint(i,:);
-            srcinfo.dipoles = v_mx;
-            H_11 = lfmm3d(eps,srcinfo,pg,targ,pgt);
-            H_11_sum = H_11_sum + H_11.pottarg;
-        end
-        slp_pt1(j,:) = H_11_sum * (dx*dy*dz);
-
-    elseif j == 2
-        for i = 1:3
-            srcinfo.charges = bie_f(i,:);
-            v_mx(i,:) = bie_f(i,:).*posint(i,:);
-            srcinfo.dipoles = v_mx;
-            H_12 = lfmm3d(eps,srcinfo,pg,targ,pgt);
-            H_12_sum = H_12_sum + H_12.pottarg;
-        end
-        slp_pt1(j,:) = H_12_sum * (dx*dy*dz);
-
-    else % j==3
-        for i = 1:3
-            srcinfo.charges = bie_f(i,:);
-            v_mx(i,:) = bie_f(i,:).*posint(i,:);
-            srcinfo.dipoles = v_mx;
-            H_13 = lfmm3d(eps,srcinfo,pg,targ,pgt);
-            H_13_sum = H_13_sum + H_13.pottarg;
-        end
-        slp_pt1(j,:) = H_13_sum * (dx*dy*dz);
-
+j = 1;
+for i = 1:3
+    v_mx = zeros(3, ns);
+    
+    if i == j
+        srcinfo.charges = bie_f(i,:);
+    else
+        srcinfo.charges = zeros(1,ns);
     end
-   
+    
+    v_mx(j,:) = bie_f(i,:).*posint(i,:);
+    srcinfo.dipoles = -v_mx;
+    
+    H_11 = lfmm3d(eps,srcinfo,pg,targ,pgt);
+    H_11_sum = H_11_sum + H_11.pottarg;
 end
+slp_pt1(j,:) = H_11_sum * (dx*dy*dz);
 
-%work on this after lunch!
+
+j = 2;
+for i = 1:3
+    v_mx = zeros(3, ns);
+    
+    if i == j
+        srcinfo.charges = bie_f(i,:);
+    else
+        srcinfo.charges = zeros(1,ns);
+    end
+    
+    v_mx(j,:) = bie_f(i,:).*posint(i,:);
+    srcinfo.dipoles = -v_mx;
+    
+    H_12 = lfmm3d(eps,srcinfo,pg,targ,pgt);
+    H_12_sum = H_12_sum + H_12.pottarg;
+end
+slp_pt1(j,:) = H_12_sum * (dx*dy*dz);
+
+
+j = 3;
+for i = 1:3
+    v_mx = zeros(3, ns);
+    
+    if i == j
+        srcinfo.charges = bie_f(i,:);
+    else
+        srcinfo.charges = zeros(1,ns);
+    end
+    
+    v_mx(j,:) = bie_f(i,:).*posint(i,:);
+    srcinfo.dipoles = -v_mx;
+    H_13 = lfmm3d(eps,srcinfo,pg,targ,pgt);
+    H_13_sum = H_13_sum + H_13.pottarg;
+end
+slp_pt1(j,:) = H_13_sum * (dx*dy*dz);
+
+
+%% pt 2
 slp_pt2 = zeros(3, ntarg);
-srcinfo.charges = zeros(1,ns);
 
-v_mx2 = zeros(3, ns);
 H_21_sum = zeros(1, ntarg);
 H_22_sum = zeros(1, ntarg);
 H_23_sum = zeros(1, ntarg);
-% for extra term
-for j = 1:3
-    if j == 1
-        for i = 1:3
-            v_mx2(i,:) = bie_f(i,:);
-            srcinfo.dipoles = v_mx2;
-            H_21 = lfmm3d(eps,srcinfo,pg,targ,pgt);
-            H_21_sum = H_21_sum + H_21.pottarg;
-        end
-        slp_pt2(j,:) = targ(j,:).*H_21_sum * (dx*dy*dz);
 
-    elseif j == 2
-        for i = 1:3
-            v_mx2(i,:) = bie_f(i,:);
-            srcinfo.dipoles = v_mx2;
-            H_22 = lfmm3d(eps,srcinfo,pg,targ,pgt);
-            H_22_sum = H_22_sum + H_22.pottarg;
-        end
-        slp_pt2(j,:) = targ(j,:).*H_22_sum * (dx*dy*dz);
+srcinfo.charges = zeros(1,ns);
 
-    else % j==3
-        for i = 1:3
-            v_mx2(i,:) = bie_f(i,:);
-            srcinfo.dipoles = v_mx2;
-            H_23 = lfmm3d(eps,srcinfo,pg,targ,pgt);
-            H_23_sum = H_23_sum + H_23.pottarg;
-        end
-        slp_pt2(j,:) = targ(j,:).*H_23_sum * (dx*dy*dz);
-
-    end
+j = 1;
+for i = 1:3
+    v_mx2 = zeros(3, ns);
+    v_mx2(j,:) = bie_f(i,:);
+    srcinfo.dipoles = v_mx2;
     
-    U_targ = lfmm3d(eps,srcinfo,pg,targ,pgt);
-    
-    x3m = targ(end,:);
-    slp_pt2(j,:) = x3m.*U_targ.pottarg .* (dx*dy*dz);
+    H_21 = lfmm3d(eps,srcinfo,pg,targ,pgt);
+    H_21_sum = H_21_sum + targ(i,:).*H_21.pottarg;
 end
+slp_pt2(j,:) = H_21_sum * (dx*dy*dz);
+
+
+j = 2;
+for i = 1:3
+    v_mx2 = zeros(3, ns);
+    v_mx2(j,:) = bie_f(i,:);
+    srcinfo.dipoles = v_mx2;
+    
+    H_22 = lfmm3d(eps,srcinfo,pg,targ,pgt);
+    H_22_sum = H_22_sum + targ(i,:).*H_22.pottarg;
+end
+slp_pt2(j,:) = H_22_sum * (dx*dy*dz);
+
+
+j = 3;
+for i = 1:3
+    v_mx2 = zeros(3, ns);
+    v_mx2(j,:) = bie_f(i,:);
+    srcinfo.dipoles = v_mx2;
+    
+    H_23 = lfmm3d(eps,srcinfo,pg,targ,pgt);
+    H_23_sum = H_23_sum + targ(i,:).*H_23.pottarg;
+end
+slp_pt2(j,:) = H_23_sum * (dx*dy*dz);
+
+%% Finalize 
+slp_fmm = slp_pt1 + slp_pt2;
 
 % Add one more part : direct computation when source == targ
-
-slp_fmm = slp_pt1 - slp_pt2;
 
 % Add singularity point (not for now, 09/15/22)
 % singular = zeros(size(xyz,2), size(targ,2));
