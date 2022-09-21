@@ -1,4 +1,4 @@
-function slp_fmm = surf_integral(posint, dx, dy, dz, targ, bie_f)
+function slp_fmm = surf_integral(posint, dx, dy, targ, bie_f)
 % posint = center of square faces : size should be 3 x something
 % bie_f also has 3 x something form
 % targ = target points
@@ -37,7 +37,7 @@ for i = 1:3
     H_11 = lfmm3d(eps,srcinfo,pg,targ,pgt);
     H_11_sum = H_11_sum + H_11.pottarg;
 end
-slp_pt1(j,:) = H_11_sum * (dx*dy*dz);
+slp_pt1(j,:) = H_11_sum * (dx*dy);
 
 
 j = 2;
@@ -56,7 +56,7 @@ for i = 1:3
     H_12 = lfmm3d(eps,srcinfo,pg,targ,pgt);
     H_12_sum = H_12_sum + H_12.pottarg;
 end
-slp_pt1(j,:) = H_12_sum * (dx*dy*dz);
+slp_pt1(j,:) = H_12_sum * (dx*dy);
 
 
 j = 3;
@@ -74,7 +74,7 @@ for i = 1:3
     H_13 = lfmm3d(eps,srcinfo,pg,targ,pgt);
     H_13_sum = H_13_sum + H_13.pottarg;
 end
-slp_pt1(j,:) = H_13_sum * (dx*dy*dz);
+slp_pt1(j,:) = H_13_sum * (dx*dy);
 
 
 %% pt 2
@@ -95,7 +95,7 @@ for i = 1:3
     H_21 = lfmm3d(eps,srcinfo,pg,targ,pgt);
     H_21_sum = H_21_sum + targ(i,:).*H_21.pottarg;
 end
-slp_pt2(j,:) = H_21_sum * (dx*dy*dz);
+slp_pt2(j,:) = H_21_sum * (dx*dy);
 
 
 j = 2;
@@ -107,7 +107,7 @@ for i = 1:3
     H_22 = lfmm3d(eps,srcinfo,pg,targ,pgt);
     H_22_sum = H_22_sum + targ(i,:).*H_22.pottarg;
 end
-slp_pt2(j,:) = H_22_sum * (dx*dy*dz);
+slp_pt2(j,:) = H_22_sum * (dx*dy);
 
 
 j = 3;
@@ -119,7 +119,7 @@ for i = 1:3
     H_23 = lfmm3d(eps,srcinfo,pg,targ,pgt);
     H_23_sum = H_23_sum + targ(i,:).*H_23.pottarg;
 end
-slp_pt2(j,:) = H_23_sum * (dx*dy*dz);
+slp_pt2(j,:) = H_23_sum * (dx*dy);
 
 %% Finalize 
 slp_fmm = slp_pt1 + slp_pt2;
