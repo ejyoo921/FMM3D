@@ -42,8 +42,7 @@ for nn = 1:ns
                 
                 for zz = 1:length(zSpan)
                     posint_n(3) = zSpan(zz);
-                    H_part = H_part + ...
-                        (dSy*dSz).*sur_fmm_Hsum(j, ns, bie_f_n, posint_n, eps, srcinfo, pg, targ, pgt);
+                    H_part = H_part + sur_fmm_Hsum(j, ns, bie_f_n, posint_n, eps, srcinfo, pg, targ, pgt);
                 end
                 
             end
@@ -54,14 +53,13 @@ for nn = 1:ns
             ySpan = posint(2,nn);
             zSpan = (-1+posint(3,nn)) + dSz : dSz : (1+posint(3,nn)) - dSz;
             
-            for xx = 1:length(xSpan)
-                posint_n(2) = ySpan;
-                posint_n(1) = xSpan(xx);
+            for yy = 1:length(ySpan)
+                posint_n(1) = xSpan;
+                posint_n(2) = ySpan(yy);
                 
                 for zz = 1:length(zSpan)
                     posint_n(3) = zSpan(zz);
-                    H_part = H_part + ...
-                        (dSx*dSz).*sur_fmm_Hsum(j, ns, bie_f_n, posint_n, eps, srcinfo, pg, targ, pgt);
+                    H_part = H_part + sur_fmm_Hsum(j, ns, bie_f_n, posint_n, eps, srcinfo, pg, targ, pgt);
                 end
                 
             end
@@ -69,26 +67,69 @@ for nn = 1:ns
         else %normal dir = 3
             xSpan = (-1+posint(1,nn)) + dSx : dSx : (1+posint(1,nn)) - dSx;
             ySpan = (-1+posint(2,nn)) + dSy : dSy : (1+posint(2,nn)) - dSy;
-            zSpan = posint(3,nn);
-            
-            for xx = 1:length(xSpan)
-                posint_n(3) = zSpan;
-                posint_n(1) = xSpan(xx);
-                
-                for yy = 1:length(ySpan)
-                    posint_n(2) = ySpan(yy);
-                    H_part = H_part + ...
-                        (dSx*dSy).*sur_fmm_Hsum(j, ns, bie_f_n, posint_n, eps, srcinfo, pg, targ, pgt);
-                end
-                
-            end
-            
-            
         end
         
-        slp_pt1(j,:) = H_part;
+        slp_pt1(j,:) = H_part * dSx * dSy;
     end
 end
+
+
+
+j = 1;
+for i = 1:3
+    v_mx = zeros(3, ns);
+    
+    if i == j
+        srcinfo.charges = bie_f(i,:);
+    else
+        srcinfo.charges = zeros(1,ns);
+    end
+    
+    v_mx(j,:) = bie_f(i,:).*posint(i,:);
+    srcinfo.dipoles = -v_mx;
+    
+    H_part = lfmm3d(eps,srcinfo,pg,targ,pgt);
+    H_11_sum = H_11_sum + H_part.pottarg;
+end
+slp_pt1(j,:) = H_11_sum * (dSx*dSy);
+
+
+j = 2;
+for i = 1:3
+    v_mx = zeros(3, ns);
+    
+    if i == j
+        srcinfo.charges = bie_f(i,:);
+    else
+        srcinfo.charges = zeros(1,ns);
+    end
+    
+    v_mx(j,:) = bie_f(i,:).*posint(i,:);
+    srcinfo.dipoles = -v_mx;
+    
+    H_12 = lfmm3d(eps,srcinfo,pg,targ,pgt);
+    H_12_sum = H_12_sum + H_12.pottarg;
+end
+slp_pt1(j,:) = H_12_sum * (dSx*dSy);
+
+
+j = 3;
+for i = 1:3
+    v_mx = zeros(3, ns);
+    
+    if i == j
+        srcinfo.charges = bie_f(i,:);
+    else
+        srcinfo.charges = zeros(1,ns);
+    end
+    
+    v_mx(j,:) = bie_f(i,:).*posint(i,:);
+    srcinfo.dipoles = -v_mx;
+    H_13 = lfmm3d(eps,srcinfo,pg,targ,pgt);
+    H_13_sum = H_13_sum + H_13.pottarg;
+end
+slp_pt1(j,:) = H_13_sum * (dSx*dSy);
+
 
 %% pt 2
 slp_pt2 = zeros(3, ntarg);
