@@ -4,24 +4,24 @@ function slp_fmm = surf_integral(posint, r, dSx, dSy, dSz, targ, bie_f, ndir)
 % targ = target points
 eps = 1e-10;
 
-% few setups 
+% few setups
 pg = 1;
 pgt = 1;
 
 ns = size(posint,2);
-srcinfo.sources = posint; %xj (3 x N)
+% srcinfo.sources = posint; %xj (3 x N)
 
 ntarg = size(targ,2);
 
-% We compute each element in the volume integral 
-%% part 1
+% We compute each element in the volume integral
+
 slp_pt1 = zeros(3, ntarg);
 slp_pt2 = zeros(3, ntarg);
 
 H_part = zeros(1, ntarg);
 H2_part = zeros(1, ntarg);
 
-% posint_n = [0; 0; 0];
+%% part 1
 for j = 1:3
     
     for nn = 1:ns
@@ -31,52 +31,45 @@ for j = 1:3
         
         if normal_dir == 1
             
-            ySpan = (-r+posint(2,nn)) + dSy : dSy : (r+posint(2,nn)) - dSy;
-            zSpan = (-r+posint(3,nn)) + dSz : dSz : (r+posint(3,nn)) - dSz;
-            xSpan = posint(1,nn).*ones(1, length(ySpan));
+            ySpan = [posint(2,nn)-dSy, posint(2,nn), posint(2,nn)+dSy];
+            zSpan = [posint(3,nn)-dSz, posint(3,nn), posint(3,nn)+dSz];
+            xSpan = posint(1,nn);
             
-            posint_all = make_grid(xSpan, ySpan, zSpan);
-
-            H_part = H_part + ...
-                (dSy*dSz).*sur_fmm_Hsum(j, bie_f_n, posint_all, eps, pg, targ, pgt);
+            posint_H = make_grid(xSpan, ySpan, zSpan);
             
-            H2_part = H2_part + ...
-                (dSy*dSz).*sur_fmm_Hsum2(j, ns, bie_f, eps, srcinfo, pg, targ, pgt);
-
+            H_part =   (dSy*dSz).*sur_fmm_Hsum(j, bie_f_n, posint_H, eps, pg, targ, pgt);            
+            H2_part = (dSy*dSz).*sur_fmm_Hsum2(j,  bie_f_n, eps, posint_H, pg, targ, pgt);
+            
         elseif normal_dir == 2
-            
-            xSpan = (-r+posint(1,nn)) + dSx : dSx : (r+posint(1,nn)) - dSx;
-            ySpan = posint(2,nn).*ones(1, length(xSpan));
-            zSpan = (-r+posint(3,nn)) + dSz : dSz : (r+posint(3,nn)) - dSz;
-            
-            posint_all = make_grid(xSpan, ySpan, zSpan);
 
-            H_part = H_part + ...
-                (dSy*dSz).*sur_fmm_Hsum(j, bie_f_n, posint_all, eps, pg, targ, pgt);
+            xSpan = [posint(1,nn)-dSx, posint(1,nn), posint(1,nn)+dSx];
+            zSpan = [posint(3,nn)-dSz, posint(3,nn), posint(3,nn)+dSz];
+            ySpan = posint(2,nn);
             
-                    H2_part = H2_part + ...
-                        (dSx*dSz).*sur_fmm_Hsum2(j, ns, bie_f, eps, srcinfo, pg, targ, pgt);
+            posint_H = make_grid(xSpan, ySpan, zSpan);
+            
+            H_part =(dSx*dSz).*sur_fmm_Hsum(j, bie_f_n, posint_H, eps, pg, targ, pgt);
+            
+            H2_part = (dSx*dSz).*sur_fmm_Hsum2(j, bie_f_n, eps, posint_H, pg, targ, pgt);
             
         else %normal dir = 3
             
-            xSpan = (-r+posint(1,nn)) + dSx : dSx : (r+posint(1,nn)) - dSx;
-            ySpan = (-r+posint(2,nn)) + dSy : dSy : (r+posint(2,nn)) - dSy;
-            zSpan = posint(3,nn).*ones(1, length(xSpan));
+            xSpan = [posint(1,nn)-dSx, posint(1,nn), posint(1,nn)+dSx];
+            ySpan = [posint(2,nn)-dSy, posint(2,nn), posint(2,nn)+dSy];
+            zSpan = posint(3,nn);
             
-            posint_all = make_grid(xSpan, ySpan, zSpan);
+            posint_H = make_grid(xSpan, ySpan, zSpan);
             
-    
-                    H_part = H_part + ...
-                (dSy*dSz).*sur_fmm_Hsum(j, bie_f_n, posint_all, eps, pg, targ, pgt);
             
-                    H2_part = H2_part + ...
-                        (dSx*dSy).*sur_fmm_Hsum2(j, ns, bie_f, eps, srcinfo, pg, targ, pgt);
-
+            H_part = (dSx*dSy).*sur_fmm_Hsum(j, bie_f_n, posint_H, eps, pg, targ, pgt);
+            
+            H2_part = (dSx*dSy).*sur_fmm_Hsum2(j, bie_f_n, eps, posint_H, pg, targ, pgt);
+            
             
         end
         
-        slp_pt1(j,:) = H_part;
-        slp_pt2(j,:) = H2_part;
+        slp_pt1(j,:) = slp_pt1(j,:) + H_part;
+        slp_pt2(j,:) = slp_pt2(j,:) + H2_part;
     end
 end
 
