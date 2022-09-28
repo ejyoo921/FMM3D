@@ -1,4 +1,4 @@
-function slp_fmm = surf_integral(posint, dSx, dSy, dSz, targ, bie_f, ndir)
+function slp_fmm = surf_integral(posint, r, dSx, dSy, dSz, targ, bie_f, ndir)
 % posint = center of square faces : size should be 3 x something
 % bie_f also has 3 x something form
 % targ = target points
@@ -16,182 +16,89 @@ ntarg = size(targ,2);
 % We compute each element in the volume integral 
 %% part 1
 slp_pt1 = zeros(3, ntarg);
+slp_pt2 = zeros(3, ntarg);
 
 H_part = zeros(1, ntarg);
-
-H_11_sum = zeros(1, ntarg);
-H_12_sum = zeros(1, ntarg);
-H_13_sum = zeros(1, ntarg);
+H2_part = zeros(1, ntarg);
 
 posint_n = [0; 0; 0];
-for nn = 1:ns
-    normal_dir = ndir(nn);
-    bie_f_n = bie_f(:,nn);
+for j = 1:3
     
-    
-    for j = 1:3
+    for nn = 1:ns
+        normal_dir = ndir(nn);
+        bie_f_n = bie_f(:,nn);
+        
+        
         if normal_dir == 1
             
-            xSpan = posint(1,nn);
-            ySpan = (-1+posint(2,nn)) + dSy : dSy : (1+posint(2,nn)) - dSy;
-            zSpan = (-1+posint(3,nn)) + dSz : dSz : (1+posint(3,nn)) - dSz;
+            ySpan = (-r+posint(2,nn)) + dSy : dSy : (r+posint(2,nn)) - dSy;
+            zSpan = (-r+posint(3,nn)) + dSz : dSz : (r+posint(3,nn)) - dSz;
+            xSpan = posint(1,nn).*ones(1, length(ySpan));
             
-            for yy = 1:length(ySpan)
-                posint_n(1) = xSpan;
-                posint_n(2) = ySpan(yy);
-                
-                for zz = 1:length(zSpan)
-                    posint_n(3) = zSpan(zz);
-                    H_part = H_part + sur_fmm_Hsum(j, ns, bie_f_n, posint_n, eps, srcinfo, pg, targ, pgt);
-                end
-                
-            end
+            posint_all = make_grid(xSpan, ySpan, zSpan);
+
+            H_part = H_part + ...
+                (dSy*dSz).*sur_fmm_Hsum(j, bie_f_n, posint_all, eps, pg, targ, pgt);
             
-            
+            H2_part = H2_part + ...
+                (dSy*dSz).*sur_fmm_Hsum2(j, ns, bie_f, eps, srcinfo, pg, targ, pgt);
+
         elseif normal_dir == 2
-            xSpan = (-1+posint(1,nn)) + dSx : dSx : (1+posint(1,nn)) - dSx;
-            ySpan = posint(2,nn);
-            zSpan = (-1+posint(3,nn)) + dSz : dSz : (1+posint(3,nn)) - dSz;
+            xSpan = (-r+posint(1,nn)) + dSx : dSx : (r+posint(1,nn)) - dSx;
+            ySpan = posint(2,nn).*ones(1, length(ySpan);
+            zSpan = (-r+posint(3,nn)) + dSz : dSz : (r+posint(3,nn)) - dSz;
             
-            for yy = 1:length(ySpan)
-                posint_n(1) = xSpan;
-                posint_n(2) = ySpan(yy);
+            posint_all = make_grid(xSpan, ySpan, zSpan);
+
+           
+            for xx = 1:length(xSpan)
+                posint_n(2) = ySpan;
+                posint_n(1) = xSpan(xx);
                 
                 for zz = 1:length(zSpan)
                     posint_n(3) = zSpan(zz);
-                    H_part = H_part + sur_fmm_Hsum(j, ns, bie_f_n, posint_n, eps, srcinfo, pg, targ, pgt);
+                    H_part = H_part + ...
+                        (dSx*dSz).*sur_fmm_Hsum(j, ns, bie_f_n, posint_n, eps, srcinfo, pg, targ, pgt);
+                    
+                    H2_part = H2_part + ...
+                        (dSx*dSz).*sur_fmm_Hsum2(j, ns, bie_f, eps, srcinfo, pg, targ, pgt);
                 end
                 
             end
             
         else %normal dir = 3
-            xSpan = (-1+posint(1,nn)) + dSx : dSx : (1+posint(1,nn)) - dSx;
-            ySpan = (-1+posint(2,nn)) + dSy : dSy : (1+posint(2,nn)) - dSy;
+            xSpan = (-r+posint(1,nn)) + dSx : dSx : (r+posint(1,nn)) - dSx;
+            ySpan = (-r+posint(2,nn)) + dSy : dSy : (r+posint(2,nn)) - dSy;
+            zSpan = posint(3,nn);
+            
+            for xx = 1:length(xSpan)
+                posint_n(3) = zSpan;
+                posint_n(1) = xSpan(xx);
+                
+                for yy = 1:length(ySpan)
+                    posint_n(2) = ySpan(yy);
+                    H_part = H_part + ...
+                        (dSx*dSy).*sur_fmm_Hsum(j, ns, bie_f_n, posint_n, eps, srcinfo, pg, targ, pgt);
+                    
+                    H2_part = H2_part + ...
+                        (dSx*dSy).*sur_fmm_Hsum2(j, ns, bie_f, eps, srcinfo, pg, targ, pgt);
+                end
+                
+            end
+            
+            
         end
         
-        slp_pt1(j,:) = H_part * dSx * dSy;
+        slp_pt1(j,:) = H_part;
+        slp_pt2(j,:) = H2_part;
     end
 end
 
-
-
-j = 1;
-for i = 1:3
-    v_mx = zeros(3, ns);
-    
-    if i == j
-        srcinfo.charges = bie_f(i,:);
-    else
-        srcinfo.charges = zeros(1,ns);
-    end
-    
-    v_mx(j,:) = bie_f(i,:).*posint(i,:);
-    srcinfo.dipoles = -v_mx;
-    
-    H_part = lfmm3d(eps,srcinfo,pg,targ,pgt);
-    H_11_sum = H_11_sum + H_part.pottarg;
-end
-slp_pt1(j,:) = H_11_sum * (dSx*dSy);
-
-
-j = 2;
-for i = 1:3
-    v_mx = zeros(3, ns);
-    
-    if i == j
-        srcinfo.charges = bie_f(i,:);
-    else
-        srcinfo.charges = zeros(1,ns);
-    end
-    
-    v_mx(j,:) = bie_f(i,:).*posint(i,:);
-    srcinfo.dipoles = -v_mx;
-    
-    H_12 = lfmm3d(eps,srcinfo,pg,targ,pgt);
-    H_12_sum = H_12_sum + H_12.pottarg;
-end
-slp_pt1(j,:) = H_12_sum * (dSx*dSy);
-
-
-j = 3;
-for i = 1:3
-    v_mx = zeros(3, ns);
-    
-    if i == j
-        srcinfo.charges = bie_f(i,:);
-    else
-        srcinfo.charges = zeros(1,ns);
-    end
-    
-    v_mx(j,:) = bie_f(i,:).*posint(i,:);
-    srcinfo.dipoles = -v_mx;
-    H_13 = lfmm3d(eps,srcinfo,pg,targ,pgt);
-    H_13_sum = H_13_sum + H_13.pottarg;
-end
-slp_pt1(j,:) = H_13_sum * (dSx*dSy);
-
-
-%% pt 2
-slp_pt2 = zeros(3, ntarg);
-
-H_21_sum = zeros(1, ntarg);
-H_22_sum = zeros(1, ntarg);
-H_23_sum = zeros(1, ntarg);
-
-srcinfo.charges = zeros(1,ns);
-
-j = 1;
-for i = 1:3
-    v_mx2 = zeros(3, ns);
-    v_mx2(j,:) = bie_f(i,:);
-    srcinfo.dipoles = v_mx2;
-    
-    H_21 = lfmm3d(eps,srcinfo,pg,targ,pgt);
-    H_21_sum = H_21_sum + targ(i,:).*H_21.pottarg;
-end
-slp_pt2(j,:) = H_21_sum * (dSx*dSy);
-
-
-j = 2;
-for i = 1:3
-    v_mx2 = zeros(3, ns);
-    v_mx2(j,:) = bie_f(i,:);
-    srcinfo.dipoles = v_mx2;
-    
-    H_22 = lfmm3d(eps,srcinfo,pg,targ,pgt);
-    H_22_sum = H_22_sum + targ(i,:).*H_22.pottarg;
-end
-slp_pt2(j,:) = H_22_sum * (dSx*dSy);
-
-
-j = 3;
-for i = 1:3
-    v_mx2 = zeros(3, ns);
-    v_mx2(j,:) = bie_f(i,:);
-    srcinfo.dipoles = v_mx2;
-    
-    H_23 = lfmm3d(eps,srcinfo,pg,targ,pgt);
-    H_23_sum = H_23_sum + targ(i,:).*H_23.pottarg;
-end
-slp_pt2(j,:) = H_23_sum * (dSx*dSy);
 
 %% Finalize 
 slp_fmm = slp_pt1 + slp_pt2;
 
 % Add one more part : direct computation when source == targ
-
-% Add singularity point (not for now, 09/15/22)
-% singular = zeros(size(xyz,2), size(targ,2));
-% for ii = 1:size(xyz,2)
-%     for jj = 1:size(targ,2)
-%         
-%         if norm(xyz(:,ii) - targ(:,jj)) < 1e-6
-%             singular(ii, jj) = 1; %missing part
-%             Volume(:,jj) = Volume(:,jj) + f_bie(ii).*CG_singular;
-%         end
-%         
-%     end
-% end
 
 end
 
