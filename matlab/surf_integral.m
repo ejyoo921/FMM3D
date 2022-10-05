@@ -77,8 +77,21 @@ end
 slp_fmm = slp_pt1 + slp_pt2;
 
 % Add one more part : direct computation when source == targ
+% if vel_compute
+% for ii = 1:size(posint,2)
+%     slp_fmm(:,ii) = slp_fmm(:,ii) + Ck(ii).*singular;
+% end
+% % else
+%     for ii = 1:size(xyz,2)
+%         for jj = 1:size(targ,2)
+%             if norm(xyz(:,ii) - targ(:,jj)) < 1e-6
+%                 slp_fmm(:,jj) = slp_fmm(:,jj) + Ck(ii).*singular;
+%             end
+%         end
+%     end
+% end
 
-end
+% end
 
 
 
