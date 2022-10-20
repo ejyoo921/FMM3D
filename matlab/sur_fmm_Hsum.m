@@ -16,7 +16,7 @@ for i = 1:3
     end
     
     v_mx(j, :) = -bie_f(i).*posint_H(i,:);
-    srcinfo.dipoles = -v_mx;
+    srcinfo.dipoles = v_mx;
     
     H_11 = lfmm3d(eps, srcinfo, pg, targ, pgt);
     H_part = H_part + H_11.pottarg;
