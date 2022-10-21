@@ -77,9 +77,8 @@ end
 % Add one more part : direct computation when source == targ
 
 Volume = Volume_pt1 - Volume_pt2;
-% Add singularity point
 
-
+%% Add singularity point
 if vel_compute
     for ii = 1:size(xyz,2)
         Volume(:,ii) = Volume(:,ii) + Ck(ii).*CG_singular;
