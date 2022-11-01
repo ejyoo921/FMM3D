@@ -3,7 +3,7 @@ function slp_fmm = surf_integral(posint, nSx, nSy, nSz, targ, bie_f, ndir)
 % bie_f also has 3 x something form
 % targ = target points
 
-eps = 1e-5;
+eps = 1e-10;
 
 % few setups
 pg = 1;
