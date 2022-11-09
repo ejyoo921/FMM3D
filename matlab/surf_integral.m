@@ -1,9 +1,9 @@
-function slp_fmm = surf_integral(posint, nSx, nSy, nSz, targ, bie_f, ndir)
+function slp_fmm = surf_integral(posint, nSx, nSy, nSz, targ, bie_f, ndir, eps)
 % posint = center of square faces : size should be 3 x something
 % bie_f also has 3 x something form
 % targ = target points
 
-eps = 1e-10;
+% eps = 1e-5;
 
 % few setups
 pg = 1;
