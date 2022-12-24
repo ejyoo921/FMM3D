@@ -1,5 +1,5 @@
 *.DS_Store
-/matlab/.DS_Store/
+*/matlab/.DS_Store/
 __pycache__
 build
 dist
